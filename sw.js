@@ -1,5 +1,5 @@
 /* نَسَق — Service Worker */
-const VERSION = 'naasaq-v1.4.0';
+const VERSION = 'naasaq-v1.4.1';
 const ASSETS = [
   './',
   './index.html',
@@ -12,6 +12,10 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (e) => {
+  /* إنقاذ لمرة واحدة: يفعّل نفسه فورًا ليحرّر العالقين على محرّك 1.2
+     (كاش-أولًا بلا زر تحديث دائم) — صفحتهم تعيد التحميل تلقائيًا عبر
+     مستمع controllerchange الموجود لديها. يُعاد سلوك الموافقة في 1.5. */
+  self.skipWaiting();
   e.waitUntil(
     caches.open(VERSION).then((c) => c.addAll(ASSETS.map((u) => new Request(u, { cache: 'reload' }))))
   );
