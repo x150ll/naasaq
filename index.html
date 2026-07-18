@@ -786,6 +786,15 @@ input[type=range]::-moz-range-thumb{width:21px;height:21px;border-radius:99px;ba
 .flash{animation:nsqflash .9s ease}
 @keyframes nsqflash{0%,100%{box-shadow:0 0 0 0 transparent}30%{box-shadow:0 0 0 3px color-mix(in srgb,var(--gold) 65%,transparent)}}
 .grab{width:44px;height:5px;border-radius:99px;background:var(--line);margin:2px auto 14px}
+body.locked{overflow:hidden}
+.d7{display:flex;gap:6px}
+.dc{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0 7px;border-radius:12px;border:1.5px solid var(--line);background:var(--card2);cursor:pointer;transition:.15s}
+.dc b{font:800 13px var(--f-disp)}
+.dc span{font:600 9px var(--f-body);color:var(--ink3)}
+.dc.y{background:color-mix(in srgb,var(--hc,var(--basil)) 16%,var(--card));border-color:var(--hc,var(--basil))}
+.dc.y b{color:var(--hc,var(--basil))}
+.dc.tod{outline:1.5px solid var(--gold);outline-offset:1px}
+.dc:disabled{opacity:.32;cursor:default}
 .immersive #nav,.immersive #fab{display:none!important}
 .immersive #app{padding-bottom:24px}
 </style>
@@ -906,6 +915,7 @@ input[type=range]::-moz-range-thumb{width:21px;height:21px;border-radius:99px;ba
   <img src="assets/icon-192.png" alt="">
   <div class="tx"><b>إصدار جديد جاهز</b><span>حدّث لتحصل على آخر التحسينات</span></div>
   <button class="btn gold sm" id="bnUpdateGo">تحديث الآن</button>
+  <button class="icobtn sm" id="bnUpdateX" aria-label="لاحقًا"><svg class="i"><use href="#i-close"/></svg></button>
 </div>
 <script>
 'use strict';
@@ -1151,10 +1161,11 @@ const Layers={stack:[],
   back(){if(this.stack.length)history.back();}
 };
 window.addEventListener('popstate',()=>{Layers.closeTop();});
-function updOvl(){$('#ovl').classList.toggle('on',$('#sheet').classList.contains('on')||$('#modal').classList.contains('on'));}
+function updOvl(){const open=$('#sheet').classList.contains('on')||$('#modal').classList.contains('on');
+$('#ovl').classList.toggle('on',open);document.body.classList.toggle('locked',open);}
 function sheetOpen(){return $('#sheet').classList.contains('on');}
 function openSheet(html,onOpen){const sh=$('#sheet');sh.innerHTML='<div class="grab"></div>'+html;
-  $('#ovl').classList.add('on');sh.classList.add('on');SFX.open();
+  sh.classList.add('on');updOvl();SFX.open();
   Layers.push(()=>{sh.classList.remove('on');updOvl();});
   if(onOpen)onOpen(sh);}
 function closeSheet(){Layers.back();}
@@ -1163,7 +1174,7 @@ function askConfirm(title,msg,okLabel,danger){return new Promise(res=>{
   b.innerHTML='<h3>'+esc(title)+'</h3><p>'+esc(msg)+'</p>'+
     '<div style="display:flex;gap:9px"><button class="btn soft" style="flex:1" data-x="0">إلغاء</button>'+
     '<button class="btn '+(danger?'danger':'gold')+'" style="flex:1" data-x="1">'+esc(okLabel||'تأكيد')+'</button></div>';
-  m.classList.add('on');$('#ovl').classList.add('on');
+  m.classList.add('on');updOvl();
   Layers.push(()=>{m.classList.remove('on');updOvl();b.onclick=null;res(result);});
   b.onclick=e=>{const x=e.target.closest('[data-x]');if(!x)return;
     result=x.dataset.x==='1';Layers.back();};
@@ -1416,7 +1427,9 @@ const FT={phase:'work',running:false,endsAt:0,leftMs:0,round:1,task:null,int:0,l
     if(TAB==='focus'&&!SUB)renderFocus();},
   fmt(){const s=Math.max(0,Math.ceil(this.leftMs/1000));
     return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');},
-  paint(){const el=$('#ft-time');if(!el)return;
+  paint(){const base=this._title||(this._title=document.title);
+    document.title=this.running?this.fmt()+' · نَسَق':base;
+    const el=$('#ft-time');if(!el)return;
     el.textContent=this.fmt();
     const total=this.len(this.phase),p=1-this.leftMs/total;
     const ring=$('#ft-ring');if(ring){const C=+ring.dataset.c;
@@ -1424,7 +1437,7 @@ const FT={phase:'work',running:false,endsAt:0,leftMs:0,round:1,task:null,int:0,l
     const fr=$('#fring');if(fr){fr.classList.toggle('run',this.running);
       fr.classList.toggle('work',this.phase==='work');
       fr.classList.toggle('break',this.phase!=='work');}
-    const ph=$('#ft-phase');if(ph)ph.textContent=this.phase==='work'?'ت ر ك ي ز':(this.phase==='short'?'استراحة قصيرة':'استراحة طويلة');
+    const ph=$('#ft-phase');if(ph)ph.textContent=this.phase==='work'?'تركيز':(this.phase==='short'?'استراحة قصيرة':'استراحة طويلة');
     const pb=$('#ft-main');if(pb)pb.innerHTML=ic(this.running?'pause':'play');
     const doneR=this.round-1+(this.phase!=='work'?1:0);
     $$('#ft-rounds i').forEach((d,i)=>{d.classList.toggle('y',i<doneR);
@@ -1657,6 +1670,12 @@ function openHabitDetail(id){openSub(()=>{const h=habitById(id);
    (h.type==='count'?'<span class="chip azure">'+h.target+' '+esc(h.unit||'مرة')+'</span>':'')+
    (h.reminder?'<span class="chip gold">'+ic('alarm')+h.reminder+'</span>':'')+'</div></div>'+
    habitControl(h,t)+'</div>'+
+  '<div class="card sect" style="--hc:'+h.color+'"><div class="card-h"><h3>'+ic('calendar')+'تسجيل الأيام الماضية</h3></div>'+
+  '<div class="d7">'+[6,5,4,3,2,1,0].map(i=>{const kk=addDays(t,-i);
+    const sch=(h.freq.kind==='days'?h.freq.days.includes(weekdayOf(kk)):true);
+    const y=sch&&habitFulfilled(h,S.habitLog,kk);
+    return '<button class="dc'+(y?' y':'')+(kk===t?' tod':'')+'"'+(sch?'':' disabled')+' data-act="hpast" data-id="'+h.id+'" data-k="'+kk+'"><b>'+fromKey(kk).getDate()+'</b><span>'+WD_MIN[weekdayOf(kk)]+'</span></button>';}).join('')+'</div>'+
+  '<p class="faint" style="font-size:10.5px;margin-top:9px">فاتك يوم؟ المسه لتعليمه'+(h.type==='count'?' مكتملًا بهدفه':'')+' — الباهت غير مجدول</p></div>'+
   '<div class="statgrid sect">'+
    '<div class="stat"><div class="sl">'+ic('flame')+'السلسلة</div><div class="sv num">'+st+'<small>'+(h.freq.kind==='weekly'?'أسبوع':'يوم')+'</small></div></div>'+
    '<div class="stat"><div class="sl">'+ic('trophy')+'الأفضل</div><div class="sv num">'+best+'</div></div>'+
@@ -1742,6 +1761,7 @@ function renderFocus(){const k=todayKey();
    '<div class="ft"><div class="ph" id="ft-phase"></div><div class="time num" id="ft-time"></div>'+
    '<div class="task-on" id="ft-task">'+(FT.task?esc((taskById(FT.task)||{}).title||''):'')+'</div></div></div>'+
   '<div class="rounds" id="ft-rounds">'+Array.from({length:S.focus.rounds},()=>'<i></i>').join('')+'</div>'+
+  '<div class="chips" style="justify-content:center;margin:4px 0 8px">'+[15,25,45,60].map(m=>'<button class="'+(S.focus.work===m?'on':'')+'" data-act="fquick" data-m="'+m+'">'+m+' د</button>').join('')+'</div>'+
   '<div class="fctrl"><button class="side" data-act="ft-reset" aria-label="إعادة">'+ic('refresh')+'</button>'+
   '<button class="main" id="ft-main" data-act="ft-main" aria-label="تشغيل/إيقاف"></button>'+
   '<button class="side" data-act="ft-skip" aria-label="تخطي">'+ic('skip')+'</button></div></div>'+
@@ -1798,7 +1818,7 @@ RENDER.more=function(){const L=levelOf(S.xp);
   '<div class="card sect" style="padding:4px 16px">'+rows.map(r=>
    '<button class="srow" style="width:100%;text-align:start;background:none;border-inline:0;border-top:0" data-act="'+r[0]+'"><div class="ic">'+ic(r[1])+'</div>'+
    '<div class="tx"><b>'+r[2]+'</b><span>'+r[3]+'</span></div>'+(r[4]?'<span class="chip">'+r[4]+'</span>':'')+ic('back','i')+'</button>').join('')+'</div>'+
-  '<p class="faint" style="text-align:center;font-size:11px;margin-top:22px">نَسَق ١.٢ — يعمل بالكامل دون اتصال<br>صُنع بإتقان · <span dir="ltr">@x150ll</span></p>';
+  '<p class="faint" style="text-align:center;font-size:11px;margin-top:22px">نَسَق ١.٣ — يعمل بالكامل دون اتصال<br>صُنع بإتقان · <span dir="ltr">@x150ll</span></p>';
 };
 
 /* ================= الأهداف ================= */
@@ -2034,7 +2054,7 @@ function openSettings(){openSub(()=>{const st=S.settings;
 
   (deferredPrompt?'<div class="sect"><button class="btn gold wide" data-act="install-app">'+ic('download')+'تثبيت «نَسَق» كتطبيق</button></div>':'')+
   '<div class="card sect"><div class="card-h"><h3>'+ic('info')+'حول</h3></div>'+
-   '<p style="font-size:13px;color:var(--ink2);line-height:1.9">«نَسَق» منصّةٌ واحدة لبناء عاداتك وتنظيم وقتك وتحقيق أهدافك — تعمل بالكامل دون اتصال، وتحفظ كل شيء على جهازك.<br>الإصدار ١.٢ · <span dir="ltr">@x150ll</span></p></div>'+
+   '<p style="font-size:13px;color:var(--ink2);line-height:1.9">«نَسَق» منصّةٌ واحدة لبناء عاداتك وتنظيم وقتك وتحقيق أهدافك — تعمل بالكامل دون اتصال، وتحفظ كل شيء على جهازك.<br>الإصدار ١.٣ · <span dir="ltr">@x150ll</span></p></div>'+
   '<input type="file" id="import-file" accept="application/json,.json" hidden>';
   const nm=$('#set-name');if(nm)nm.onchange=()=>{S.name=nm.value.trim();save();};
   const vol=$('#set-vol');if(vol)vol.oninput=()=>{S.settings.vol=vol.value/100;AU.setVol(S.settings.vol);};
@@ -2221,6 +2241,12 @@ document.addEventListener('click',async e=>{
     case'hplus':{const h=habitById(id);setHabitCount(id,todayKey(),habitCountOn(h,S.habitLog,todayKey())+1);rerender();break;}
     case'hminus':{const h=habitById(id);setHabitCount(id,todayKey(),habitCountOn(h,S.habitLog,todayKey())-1);rerender();break;}
     case'hopen':openHabitDetail(id);break;
+    case'hpast':{const kk=el.dataset.k,hh=habitById(id);
+      if(hh&&hh.createdKey&&kk<hh.createdKey)hh.createdKey=kk;
+      toggleHabit(id,kk);RENDER._sub&&RENDER._sub();break;}
+    case'fquick':{const m=+el.dataset.m;S.focus.work=m;save();
+      if(!FT.running&&FT.phase==='work')FT.leftMs=FT.len('work');
+      SFX.tap();renderFocus();break;}
     case'templates':templatesSheet();break;
     case'new-habit':habitForm();break;
     case'edit-habit':{const h=habitById(id);const w=sheetOpen();if(w)closeSheet();setTimeout(()=>habitForm(h),w?90:0);break;}
@@ -2300,6 +2326,33 @@ $('#ovl').addEventListener('click',()=>Layers.back());
 $('#celebrate').addEventListener('click',()=>$('#celebrate').classList.remove('on'));
 document.addEventListener('pointerdown',()=>AU.ensure(),{once:true});
 
+/* ================= ما الجديد ================= */
+const APP_VERSION='1.3.0';
+const CHANGELOG=[
+ {v:'1.3.0',t:'تحديث ١.٣',items:[
+  'تسجيل الأيام الماضية: فاتك تعليم عادة أمس؟ افتح تفاصيلها والمس اليوم الفائت',
+  'مدد تركيز سريعة بلمسة: ١٥ / ٢٥ / ٤٥ / ٦٠ دقيقة فوق المؤقّت',
+  'الوقت المتبقي يظهر في عنوان التبويب أثناء الجلسة',
+  'نظام تحديثات أذكى: الزر يعرف حالة اتصالك، ويمكن تأجيله ليعود تلقائيًا عند توفر الإنترنت — مع هذه الشاشة لشرح كل جديد',
+  'حروف «تركيز» متصلة، وقفل تمرير الخلفية خلف النوافذ']},
+ {v:'1.2.0',t:'تحديث ١.٢',items:[
+  'بحث حي في المهام وتصفية بالوسوم وحذف المكتملة دفعة',
+  'بطاقة مشاركة يومك كصورة أنيقة',
+  'الشاشة تبقى مضيئة أثناء التركيز + وضع الغمر',
+  'بطاقة أقرب هدف بموعده في شاشة اليوم']},
+ {v:'1.1.0',t:'تحديث ١.١',items:[
+  'الأجواء الصوتية ترتبط بالمؤقّت: تعمل معه وتصمت بإيقافه',
+  'إضافة المهام تفهم «غدًا» و«بعد غد» بذكاء أدق',
+  'تحسينات دقيقة للنقاط والمستويات']}];
+function showWhatsNew(){const seen=S.meta.seenVer||'0';
+  const news=CHANGELOG.filter(c=>c.v>seen);
+  if(!news.length)return;
+  S.meta.seenVer=APP_VERSION;save();
+  openSheet('<h2>'+ic('sparkle')+'ما الجديد في نَسَق</h2>'+
+    news.map(c=>'<div class="fld" style="margin-bottom:4px"><label>'+esc(c.t)+'</label>'+
+      c.items.map(it=>'<div style="display:flex;gap:9px;align-items:flex-start;padding:6px 0"><div style="width:22px;height:22px;border-radius:8px;background:color-mix(in srgb,var(--basil) 15%,transparent);color:var(--basil);display:grid;place-items:center;flex:none;margin-top:1px">'+ic('check')+'</div><span style="font-size:12.5px;color:var(--ink2);line-height:1.85">'+esc(it)+'</span></div>').join('')+'</div>').join('')+
+    '<button class="btn gold wide" data-act="sub-back" style="margin-top:8px">رائع، لننطلق</button>');}
+
 /* ================= الإعداد الأولي (Onboarding) ================= */
 let onbStep=0,onbName='',onbTmpl=new Set();
 function onboarding(){const steps=[
@@ -2328,24 +2381,33 @@ function finishOnb(){if(onbName)S.name=onbName;
     S.habits.push({id:uid(),name:t.n,icon:t.i,color:HB_COLORS[t.c%HB_COLORS.length],
       type:t.type||'check',target:t.target||1,unit:t.unit||'مرة',freq:{kind:'daily'},
       period:t.period||'any',reminder:'',notes:'',archived:false,createdKey:todayKey(),createdAt:Date.now()});});
-  S.meta.firstRun=false;save();checkAch();
+  S.meta.firstRun=false;S.meta.seenVer=APP_VERSION;save();checkAch();
   $('#onb').classList.remove('on');SFX.fanfare();
   Confetti.burst(innerWidth/2,innerHeight*.4,90);
   goTab('today');}
 
 /* ================= Service Worker + التحديث + التثبيت ================= */
 let deferredPrompt=null;
+let updateSnoozed=false;
+function maybeShowUpdate(){if(swReg&&swReg.waiting&&!updateSnoozed)$('#bnUpdate').classList.add('on');}
 if('serviceWorker'in navigator){
   navigator.serviceWorker.register('sw.js').then(reg=>{swReg=reg;
+    if(reg.waiting)maybeShowUpdate();
     reg.addEventListener('updatefound',()=>{const nw=reg.installing;
       nw&&nw.addEventListener('statechange',()=>{
-        if(nw.state==='installed'&&navigator.serviceWorker.controller)$('#bnUpdate').classList.add('on');});});
+        if(nw.state==='installed'&&navigator.serviceWorker.controller)maybeShowUpdate();});});
+    setInterval(()=>{reg.update().catch(()=>{});},36e5);
   }).catch(()=>{});
   let reloaded=false;
   navigator.serviceWorker.addEventListener('controllerchange',()=>{if(reloaded)return;reloaded=true;location.reload();});
 }
-$('#bnUpdateGo').onclick=()=>{$('#bnUpdate').classList.remove('on');
+window.addEventListener('online',()=>{updateSnoozed=false;maybeShowUpdate();});
+$('#bnUpdateGo').onclick=()=>{
+  if(!navigator.onLine){SFX.error();toast('لا اتصال بالإنترنت — سيبقى التحديث بانتظار عودته','ban');return;}
+  $('#bnUpdate').classList.remove('on');
   if(swReg&&swReg.waiting)swReg.waiting.postMessage('SKIP_WAITING');};
+$('#bnUpdateX').onclick=()=>{updateSnoozed=true;$('#bnUpdate').classList.remove('on');
+  toast('أُجّل التحديث — سيظهر مجددًا عند الاتصال','clock');};
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;
   const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
   if(!standalone&&Date.now()-(S.meta.installDismiss||0)>3*864e5)
@@ -2358,7 +2420,8 @@ window.addEventListener('hashchange',()=>{const hs=location.hash.replace('#','')
   if(hs==='focus')goTab('focus');
   else if(hs==='new-habit'){goTab('habits');setTimeout(()=>habitForm(),150);}
   else if(hs==='new-task'){goTab('tasks');setTimeout(()=>taskForm(),150);}});
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&FT.running){FT.tick();FT.wlOn();}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(FT.running){FT.tick();FT.wlOn();}
+  if(swReg)swReg.update().catch(()=>{});}});
 document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)document.body.classList.remove('immersive');});
 
 /* ================= الإقلاع ================= */
@@ -2369,7 +2432,7 @@ function boot(){Confetti.init();applyTheme();FT.init();
   else if(hash==='new-habit'){setTimeout(()=>habitForm(),300);}
   else if(hash==='new-task'){setTimeout(()=>taskForm(),300);}
   if(S.meta.firstRun)setTimeout(onboarding,350);
-  else setTimeout(checkAch,800);}
+  else{setTimeout(showWhatsNew,650);setTimeout(checkAch,1200);}}
 boot();
 </script>
 </body>
