@@ -1,0 +1,40 @@
+{
+  "name": "نَسَق — عاداتك ومهامك وأهدافك",
+  "short_name": "نَسَق",
+  "description": "منصّة عربية واحدة لبناء العادات، تنظيم المهام والوقت، تتبّع الأهداف، وجلسات التركيز — تعمل بالكامل دون اتصال.",
+  "id": "./",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "dir": "rtl",
+  "lang": "ar",
+  "theme_color": "#0E1613",
+  "background_color": "#0E1613",
+  "categories": ["productivity", "lifestyle", "utilities"],
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "بدء جلسة تركيز",
+      "short_name": "تركيز",
+      "url": "./index.html#focus",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "إضافة عادة جديدة",
+      "short_name": "عادة جديدة",
+      "url": "./index.html#new-habit",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "إضافة مهمة",
+      "short_name": "مهمة",
+      "url": "./index.html#new-task",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
