@@ -1,5 +1,5 @@
 /* نَسَق — Service Worker */
-const VERSION = 'naasaq-v1.4.2';
+const VERSION = 'naasaq-v1.5.0';
 const ASSETS = [
   './',
   './index.html',

@@ -7,6 +7,20 @@
 <meta name="description" content="منصّة عربية واحدة لبناء العادات، تنظيم المهام والوقت، تتبّع الأهداف، وجلسات التركيز — تعمل بالكامل دون اتصال وتُثبَّت كتطبيق.">
 <meta name="color-scheme" content="dark light">
 <meta name="theme-color" id="meta-theme" content="#0E1613">
+<script>
+(function(){try{
+ var K='nasaq.v1',s=null;try{s=JSON.parse(localStorage.getItem(K))}catch(e){}
+ if(s&&s.settings&&s.settings.theme==='dark'&&!(s.meta&&s.meta.thAuto)){
+   s.settings.theme='auto';s.meta=s.meta||{};s.meta.thAuto=1;
+   try{localStorage.setItem(K,JSON.stringify(s))}catch(e){}
+ }
+ var t=(s&&s.settings&&s.settings.theme)||'auto';
+ var dark=t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);
+ document.documentElement.dataset.theme=dark?'dark':'light';
+ var m=document.getElementById('meta-theme');
+ if(m)m.setAttribute('content',dark?'#0E1613':'#F2EEE3');
+}catch(e){document.documentElement.dataset.theme='dark';}})();
+</script>
 <meta property="og:title" content="نَسَق — عاداتك ومهامك وأهدافك في مكان واحد">
 <meta property="og:description" content="عادات بسلاسل وخرائط التزام، مهام بمصفوفة أيزنهاور، أهداف بمراحل، مؤقّت تركيز بأصوات محيطة مُصنّعة — كله يعمل دون اتصال.">
 <meta property="og:type" content="website">
@@ -807,9 +821,9 @@ input[type=range]::-moz-range-thumb{width:21px;height:21px;border-radius:99px;ba
 #splash .wd{width:min(250px,60vw);height:auto;margin-top:44px;opacity:0;transform:translateY(14px);
   animation:spUp .6s 1.95s cubic-bezier(.2,.7,.2,1) forwards}
 #splash .tg{width:min(268px,66vw);height:auto;margin-top:18px;opacity:0;animation:spFade .55s 2.35s ease forwards}
-#splash .sbar{position:absolute;bottom:10.5vh;width:132px;height:3.5px;border-radius:99px;background:#1B2823;overflow:hidden}
+#splash .sbar{position:absolute;bottom:10.5vh;width:132px;height:3.5px;border-radius:99px;background:var(--heat0);overflow:hidden}
 #splash .sbar i{position:absolute;top:0;bottom:0;width:46px;border-radius:99px;
-  background:linear-gradient(90deg,#E9B44C,#F6D080);animation:spSlide 1.25s .3s linear infinite}
+  background:linear-gradient(90deg,var(--gold),var(--gold2));animation:spSlide 1.25s .3s linear infinite}
 @keyframes spEm{to{opacity:1;transform:scale(1)}}
 @keyframes spTh{to{stroke-dashoffset:0}}
 @keyframes spBd{to{transform:scale(1)}}
@@ -822,6 +836,15 @@ input[type=range]::-moz-range-thumb{width:21px;height:21px;border-radius:99px;ba
   #splash .em{opacity:1;transform:none}#splash .th{stroke-dashoffset:0}
   #splash .bd{transform:scale(1)}#splash .glow{opacity:.4}
   #splash .wd,#splash .tg{opacity:1;transform:none}}
+#splash .tg path{fill:var(--ink3)}
+[data-theme="light"] #splash{background:radial-gradient(120% 90% at 50% 32%,#F7F3E8,#ECE5D3)}
+[data-theme="light"] #splash .g1{background:radial-gradient(circle,rgba(211,148,31,.13),transparent 66%)}
+[data-theme="light"] #splash .g2{background:radial-gradient(circle,rgba(30,154,109,.10),transparent 70%)}
+[data-theme="light"] #splash .em rect:first-of-type{fill:#FFFDF6;stroke:rgba(184,127,20,.4)}
+[data-theme="light"] #splash .em rect:nth-of-type(2){stroke:rgba(0,0,0,.06)}
+[data-theme="light"] #splash .th{stroke:#C9BCA0}
+[data-theme="light"] #splash .wd path{fill:url(#spgwL)}
+[data-theme="light"] #splash .glow{opacity:.35}
 .toast .ubtn{margin-inline-start:8px;background:var(--gold);color:var(--on-gold);border:0;
   border-radius:9px;padding:6px 13px;font:800 11.5px var(--f-disp);cursor:pointer;flex:none}
 body.locked{overflow:hidden}
@@ -857,7 +880,8 @@ body.locked{overflow:hidden}
       <g class="bd b4"><circle cx="122" cy="46" r="13" fill="url(#spgb)"/><circle cx="117.8" cy="41.8" r="3.4" fill="#FBE4AE"/></g>
     </svg>
     <svg class="wd" viewBox="0 0 250 134.8">
-      <defs><linearGradient id="spgw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6D080"/><stop offset="1" stop-color="#E2A93F"/></linearGradient></defs>
+      <defs><linearGradient id="spgw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6D080"/><stop offset="1" stop-color="#E2A93F"/></linearGradient>
+<linearGradient id="spgwL" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D3941F"/><stop offset="1" stop-color="#A9750F"/></linearGradient></defs>
       <g fill="url(#spgw)" transform="translate(0,134.76) scale(0.09869,-0.09869) translate(-40.0,342.7)"><path d="M774.3 0V202.0H1052.2V0ZM1052.2 0V202.0Q1060.8 202.0 1066.5 174.6Q1072.2 147.2 1072.2 102.3Q1072.2 55.7 1066.5 27.9Q1060.8 0 1052.2 0ZM487.6 -342.7Q383.0 -342.7 300.2 -305.6Q217.3 -268.4 159.1 -202.2Q100.9 -136.0 70.5 -48.6Q40 38.9 40 139.5Q40 193.4 48.9 247.0Q57.7 300.5 72.7 349.2L235.1 318.4Q223.5 269.9 218.6 227.8Q213.7 185.8 213.7 151.2Q213.7 55.2 247.7 -9.7Q281.8 -74.7 342.9 -107.7Q404.0 -140.8 486.0 -140.8Q570.2 -140.8 632.0 -107.4Q693.8 -74.1 728.2 -11.1Q762.7 51.9 762.7 141.1V518.7L936.4 492.6V141.1Q936.4 39.7 905.6 -48.2Q874.9 -136.0 816.7 -202.2Q758.5 -268.4 675.4 -305.6Q592.2 -342.7 487.6 -342.7ZM716.9 0Q627.8 0 561.2 36.8Q494.6 73.5 458.3 135.4Q421.9 197.2 421.9 271.0Q421.9 330.9 444.7 381.2Q467.5 431.5 508.2 468.9Q549.0 506.4 602.7 527.2Q656.4 548.0 717.5 548.0Q777.6 548.0 834.7 530.3Q891.8 512.6 936.4 492.6L866.1 313.7Q779.3 354.7 717.5 354.7Q680.4 354.7 653.1 343.1Q625.8 331.5 610.7 313.2Q595.7 294.8 595.7 274.9Q595.7 257.1 609.2 240.3Q622.8 223.5 649.9 212.7Q677.0 202.0 716.9 202.0H881.4V0ZM804.7 636.8Q771.2 636.8 749.7 657.8Q728.3 678.9 728.3 711.8Q728.3 745.9 749.7 767.3Q771.2 788.8 804.7 788.8Q838.2 788.8 859.7 767.3Q881.1 745.9 881.1 711.8Q881.1 678.9 859.7 657.8Q838.2 636.8 804.7 636.8ZM631.1 636.8Q597.6 636.8 576.1 657.8Q554.7 678.9 554.7 711.8Q554.7 745.9 576.1 767.3Q597.6 788.8 631.1 788.8Q664.6 788.8 686.1 767.3Q707.5 745.9 707.5 711.8Q707.5 678.9 686.1 657.8Q664.6 636.8 631.1 636.8Z M1463.0 635.4V721.8H1783.1V635.4Z M2137.3 0.0Q2053.1 0.0 1993.3 34.1Q1933.5 68.3 1901.4 132.5Q1869.3 196.6 1869.3 285.7H2043.1Q2043.1 253.3 2050.8 234.9Q2058.6 216.5 2078.9 209.2Q2099.3 202.0 2137.3 202.0H2172.0V0.0ZM1052 0Q1043.4 0.0 1037.7 27.9Q1032.0 55.7 1032.0 102.5Q1032.0 147.4 1037.7 174.7Q1043.4 202.0 1052.0 202.0ZM1823.0 0.0Q1770.3 0.0 1721.8 24.6Q1673.3 49.3 1641.0 101.1Q1608.6 152.9 1605.5 233.4L1702.5 278.6Q1704.4 237.6 1730.3 216.5Q1756.2 195.4 1786.1 195.4Q1818.1 195.4 1843.7 217.7Q1869.3 240.0 1869.3 285.7V525.5H2043.1V250.2Q2043.1 164.2 2010.9 108.7Q1978.8 53.3 1928.8 26.6Q1878.7 0.0 1823.0 0.0ZM1052 0V202.0H1108.3Q1146.6 202.0 1166.8 209.2Q1187.0 216.5 1194.8 234.9Q1202.6 253.3 1202.6 285.7V427.3H1376.3V285.7Q1376.3 196.6 1344.2 132.5Q1312.2 68.3 1252.4 34.1Q1192.6 0.0 1108.3 0.0ZM1490.9 0.0Q1438.1 0.0 1389.6 24.6Q1341.1 49.3 1308.8 101.1Q1276.5 152.9 1273.3 233.4L1370.4 278.6Q1372.2 237.6 1398.1 216.5Q1424.0 195.4 1453.9 195.4Q1485.9 195.4 1511.5 217.7Q1537.1 240.0 1537.1 285.7V475.7H1710.9V250.2Q1710.9 164.2 1678.8 108.7Q1646.6 53.3 1596.6 26.6Q1546.5 0.0 1490.9 0.0ZM2172.0 0.0V202.0Q2180.6 202.0 2186.3 174.6Q2192.0 147.2 2192.0 102.3Q2192.0 55.7 2186.3 27.9Q2180.6 0.0 2172.0 0.0Z M2253.0 936.4V1022.8H2573.1V936.4Z M2327.0 525.5H2500.7V0.0H2172V202.0H2327.0ZM2172 0Q2163.4 0.0 2157.7 27.8Q2152.0 55.5 2152.0 102.3Q2152.0 147.4 2157.7 174.7Q2163.4 202.0 2172.0 202.0ZM2414.4 635.0Q2372.2 635.0 2345.1 661.6Q2318.1 688.2 2318.1 730.4Q2318.1 772.9 2345.1 799.8Q2372.2 826.7 2414.4 826.7Q2456.8 826.7 2483.7 799.8Q2510.6 772.9 2510.6 730.4Q2510.6 688.2 2483.7 661.6Q2456.8 635.0 2414.4 635.0Z"/></g>
     </svg>
     <svg class="tg" viewBox="0 0 268 36.2">
@@ -1103,6 +1127,47 @@ const filterTasks=(arr,q,tag)=>{q=(q||'').trim();
     if(!q)return true;
     const hay=t.title+' '+(t.notes||'')+' '+((t.subs||[]).map(s=>s.t).join(' '));
     return hay.includes(q);});};
+/* دمج ذكي بين حالتين — إضافي وآمن، لا يفقد شيئًا محليًا */
+const mergeState=(local,imp)=>{
+  const habits=local.habits.slice();
+  const hIds=new Set(habits.map(x=>x.id));
+  let addedHabits=0;
+  for(const x of imp.habits)if(!hIds.has(x.id)){habits.push(x);addedHabits++;}
+  const habitLog={};
+  for(const d in local.habitLog)habitLog[d]=Object.assign({},local.habitLog[d]);
+  for(const d in imp.habitLog){
+    if(!habitLog[d])habitLog[d]={};
+    for(const hid in imp.habitLog[d])habitLog[d][hid]=Math.max(habitLog[d][hid]||0,imp.habitLog[d][hid]||0);
+  }
+  const tasks=local.tasks.slice();
+  const tIds=new Set(tasks.map(x=>x.id));
+  let addedTasks=0;
+  for(const x of imp.tasks)if(!tIds.has(x.id)){tasks.push(x);addedTasks++;}
+  const goals=local.goals.slice();
+  const gIds=new Set(goals.map(x=>x.id));
+  let addedGoals=0;
+  for(const x of imp.goals)if(!gIds.has(x.id)){goals.push(x);addedGoals++;}
+  const journal={};
+  for(const d in local.journal)journal[d]=Object.assign({},local.journal[d]);
+  for(const d in imp.journal){
+    if(!journal[d])journal[d]=imp.journal[d];
+    else journal[d]={mood:journal[d].mood||imp.journal[d].mood||0,
+      note:journal[d].note||imp.journal[d].note||'',xp:journal[d].xp||imp.journal[d].xp||false};
+  }
+  const tags=local.tags.slice();
+  const tagNames=new Set(tags.map(x=>x.name));
+  for(const x of imp.tags)if(!tagNames.has(x.name))tags.push(x);
+  const perfect=Object.assign({},imp.perfect,local.perfect);
+  const ach=Object.assign({},imp.ach,local.ach);
+  const cnt={habitDone:Math.max(local.cnt.habitDone,imp.cnt.habitDone),
+    taskDone:Math.max(local.cnt.taskDone,imp.cnt.taskDone),
+    focusSess:Math.max(local.cnt.focusSess,imp.cnt.focusSess),
+    focusMin:Math.max(local.cnt.focusMin,imp.cnt.focusMin),
+    journal:Math.max(local.cnt.journal,imp.cnt.journal)};
+  const state=Object.assign({},local,{habits,habitLog,tasks,goals,journal,tags,perfect,ach,cnt,
+    xp:Math.max(local.xp,imp.xp),name:local.name||imp.name||''});
+  return{state,addedHabits,addedTasks,addedGoals};
+};
 /*#ENDPURE*/
 
 const WD=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
@@ -1125,17 +1190,19 @@ const QUOTES=['خرزةٌ اليوم، وخرزةٌ غدًا… وإذا بال�
 /* ================= التخزين ================= */
 const DB='nasaq.v1';
 const DEF=()=>({v:1,xp:0,name:'',
-  settings:{theme:'dark',sound:true,vol:.75,haptics:true,weekStart:6,reminders:true,quotes:true},
+  settings:{theme:'auto',sound:true,vol:.75,haptics:true,weekStart:6,reminders:true,quotes:true},
   habits:[],habitLog:{},tasks:[],tags:[{id:'t1',name:'شخصي',color:'#5FAFD9'},{id:'t2',name:'عمل',color:'#E9B44C'},{id:'t3',name:'دراسة',color:'#5ECD9F'}],
   goals:[],journal:{},
   focus:{work:25,short:5,long:15,rounds:4,autoNext:false,tick:false,log:{},sess:{}},
-  ach:{},perfect:{},meta:{firstRun:true,installDismiss:0,quoteIdx:Math.floor(Math.random()*QUOTES.length),notif:{}}});
+  ach:{},perfect:{},trash:{habits:[],tasks:[],goals:[]},
+  meta:{firstRun:true,installDismiss:0,quoteIdx:Math.floor(Math.random()*QUOTES.length),notif:{},lastSnapDay:''}});
 let S;
 try{S=JSON.parse(localStorage.getItem(DB))||DEF();}catch(e){S=DEF();}
 S=Object.assign(DEF(),S);
 S.settings=Object.assign(DEF().settings,S.settings);
 S.focus=Object.assign(DEF().focus,S.focus);
 S.meta=Object.assign(DEF().meta,S.meta);
+S.trash=Object.assign(DEF().trash,S.trash);
 const save=()=>{try{localStorage.setItem(DB,JSON.stringify(S));}catch(e){toast('تعذّر الحفظ — المساحة ممتلئة','info');}};
 
 /* ================= الاهتزاز ================= */
@@ -1535,6 +1602,59 @@ const BR={on:false,to:0,step:0,pat:[['شهيق',4,'in'],['احبس',4,'hold'],['
     this.step++;this.to=setTimeout(()=>this.cycle(),secs*1000);}
 };
 
+/* ================= نسخ احتياطية تلقائية (آخر ٣ أيام) ================= */
+const BAKKEY='nasaq.v1.bak';
+const loadBak=()=>{try{return JSON.parse(localStorage.getItem(BAKKEY))||{}}catch(e){return{}}};
+const saveBak=b=>{try{localStorage.setItem(BAKKEY,JSON.stringify(b));}catch(e){}};
+function snapshotIfNewDay(){const t=todayKey();
+  if(S.meta.lastSnapDay&&S.meta.lastSnapDay!==t){
+    const bak=loadBak();
+    bak[S.meta.lastSnapDay]={at:Date.now(),habits:S.habits.length,tasks:S.tasks.filter(x=>!x.done).length,data:JSON.stringify(S)};
+    const days=Object.keys(bak).sort().reverse();
+    for(const d of days.slice(3))delete bak[d];
+    saveBak(bak);
+  }
+  if(S.meta.lastSnapDay!==t){S.meta.lastSnapDay=t;save();}
+}
+function restoreBackup(day){const bak=loadBak();const entry=bak[day];if(!entry)return;
+  const obj=JSON.parse(entry.data);
+  S=Object.assign(DEF(),obj);
+  S.settings=Object.assign(DEF().settings,S.settings);
+  S.focus=Object.assign(DEF().focus,S.focus);
+  S.meta=Object.assign(DEF().meta,S.meta);
+  S.trash=Object.assign(DEF().trash,S.trash);
+  save();toast('استُعيدت حالة يوم '+fmtShort(day),'refresh');
+  setTimeout(()=>location.reload(),650);}
+
+/* ================= سلة المحذوفات (٧ أيام) ================= */
+function purgeTrash(){const cutoff=Date.now()-7*864e5;let ch=false;
+  for(const k of['habits','tasks','goals']){const b=S.trash[k].length;
+    S.trash[k]=S.trash[k].filter(x=>x.deletedAt>=cutoff);
+    if(S.trash[k].length!==b)ch=true;}
+  if(ch)save();}
+function restoreFromTrash(type,tid){const arr=S.trash[type];
+  const idx=arr.findIndex(x=>x.tid===tid);if(idx<0)return false;
+  const e=arr[idx];arr.splice(idx,1);
+  if(type==='habits'){S.habits.push(e.habit);
+    for(const d in e.logs){if(!S.habitLog[d])S.habitLog[d]={};S.habitLog[d][e.habit.id]=e.logs[d];}}
+  else if(type==='tasks')S.tasks.push(e.task);
+  else if(type==='goals')S.goals.push(e.goal);
+  save();return true;}
+function trashDaysLeft(deletedAt){return Math.max(0,7-Math.floor((Date.now()-deletedAt)/864e5));}
+function openTrash(){openSub(()=>{
+  const items=[...S.trash.habits.map(e=>({...e,type:'habits',name:e.habit.name,icon:e.habit.icon,color:e.habit.color})),
+    ...S.trash.tasks.map(e=>({...e,type:'tasks',name:e.task.title,icon:'tasks',color:null})),
+    ...S.trash.goals.map(e=>({...e,type:'goals',name:e.goal.title,icon:'target',color:e.goal.color}))]
+    .sort((a,b)=>b.deletedAt-a.deletedAt);
+  $('#scr-sub').innerHTML=subHead('المحذوفات',items.length?'<button class="icobtn" data-act="trash-empty" style="color:var(--clay)" title="إفراغ الكل">'+ic('trash')+'</button>':'')+
+  (items.length?'<p class="faint" style="font-size:11.5px;margin:-4px 0 12px">تُحذف نهائيًا بعد سبعة أيام من حذفها — استعِد ما تريد قبل ذلك.</p>'+
+   items.map(e=>'<div class="hab" style="'+(e.color?'--hc:'+e.color:'')+'"><div class="hic">'+ic(e.icon)+'</div>'+
+    '<div class="hx"><b>'+esc(e.name)+'</b><div class="hmeta"><span>باقٍ '+trashDaysLeft(e.deletedAt)+' يوم قبل الحذف النهائي</span></div></div>'+
+    '<button class="icobtn" data-act="trash-restore" data-type="'+e.type+'" data-tid="'+e.tid+'" title="استعادة">'+ic('refresh')+'</button>'+
+    '<button class="icobtn" data-act="trash-del" data-type="'+e.type+'" data-tid="'+e.tid+'" style="color:var(--clay)" title="حذف نهائي">'+ic('close')+'</button></div>').join('')
+  :'<div class="empty"><div class="ei">'+ic('trash')+'</div><b>المحذوفات فارغة</b><p>كل ما تحذفه يبقى هنا سبعة أيام قبل أن يُحذف نهائيًا.</p></div>');
+});}
+
 /* ================= التنبيهات ================= */
 let swReg=null;
 function notify(title,body){toast(title,'bell');
@@ -1546,7 +1666,7 @@ setInterval(()=>{
   const t=todayKey();
   if(t!==CUR_DAY){CUR_DAY=t;
     for(const kk in S.meta.notif)if(!kk.startsWith(t))delete S.meta.notif[kk];
-    save();rerender();}
+    snapshotIfNewDay();purgeTrash();save();rerender();}
   if(!S.settings.reminders)return;
   const hm=new Date().toTimeString().slice(0,5);
   for(const h of S.habits){
@@ -1886,6 +2006,7 @@ RENDER.more=function(){const L=levelOf(S.xp);
    ['go-journal','journal','اليوميات','مزاجك وسطور أيامك',''],
    ['go-ach','trophy','الإنجازات','أوسمة رحلتك',Object.keys(S.ach).length+' / '+ACH.length],
    ['go-archive','archive','الأرشيف','عادات مركونة مؤقتًا',''],
+   ['go-trash','trash','المحذوفات','استعادة خلال سبعة أيام',(S.trash.habits.length+S.trash.tasks.length+S.trash.goals.length)||''],
    ['go-settings','gear','الإعدادات','المظهر والصوت والبيانات','']];
   $('#scr-more').innerHTML=
   '<div class="top"><div><div class="tt">المزيد</div><div class="ts">كل أدواتك في نَسَقٍ واحد</div></div></div>'+
@@ -1895,7 +2016,7 @@ RENDER.more=function(){const L=levelOf(S.xp);
   '<div class="card sect" style="padding:4px 16px">'+rows.map(r=>
    '<button class="srow" style="width:100%;text-align:start;background:none;border-inline:0;border-top:0" data-act="'+r[0]+'"><div class="ic">'+ic(r[1])+'</div>'+
    '<div class="tx"><b>'+r[2]+'</b><span>'+r[3]+'</span></div>'+(r[4]?'<span class="chip">'+r[4]+'</span>':'')+ic('back','i')+'</button>').join('')+'</div>'+
-  '<p class="faint" style="text-align:center;font-size:11px;margin-top:22px">نَسَق ١.٤ — يعمل بالكامل دون اتصال<br>صُنع بإتقان · <span dir="ltr">@x150ll</span></p>';
+  '<p class="faint" style="text-align:center;font-size:11px;margin-top:22px">نَسَق ١.٥ — يعمل بالكامل دون اتصال<br>صُنع بإتقان · <span dir="ltr">@x150ll</span></p>';
 };
 
 /* ================= الأهداف ================= */
@@ -2101,7 +2222,7 @@ function openSettings(){openSub(()=>{const st=S.settings;
   const notifState=('Notification'in window)?Notification.permission:'unsupported';
   $('#scr-sub').innerHTML=subHead('الإعدادات')+
   '<div class="card"><div class="card-h"><h3>'+ic('palette')+'المظهر</h3></div>'+
-   '<div class="seg">'+[['dark','داكن','moon'],['light','فاتح','sunn'],['auto','تلقائي','refresh']].map(([v,nm,icn])=>
+   '<div class="seg">'+[['dark','داكن','moon'],['light','فاتح','sunn'],['auto','مثل جهازي','refresh']].map(([v,nm,icn])=>
    '<button class="'+(st.theme===v?'on':'')+'" data-act="set-theme" data-v="'+v+'">'+ic(icn)+nm+'</button>').join('')+'</div></div>'+
 
   '<div class="card sect"><div class="card-h"><h3>'+ic('sound')+'الصوت والاهتزاز</h3></div>'+
@@ -2122,16 +2243,22 @@ function openSettings(){openSub(()=>{const st=S.settings;
    '<div class="srow"><div class="ic">'+ic('journal')+'</div><div class="tx"><b>اقتباس اليوم</b><span>عبارة ملهمة في شاشة اليوم</span></div><label class="sw"><input type="checkbox" id="set-quotes" '+(st.quotes?'checked':'')+'><i></i></label></div>'+
    '<div class="fld"><label>اسمك (اختياري)</label><input class="inp" id="set-name" placeholder="كيف نناديك؟" value="'+esc(S.name||'')+'" maxlength="24"></div></div>'+
 
+  (()=>{const bak=loadBak();const days=Object.keys(bak).sort().reverse();
+   return days.length?'<div class="card sect"><div class="card-h"><h3>'+ic('clock')+'نسخ تلقائية — آخر '+days.length+' أيام</h3></div>'+
+    days.map(d=>'<div class="srow"><div class="ic">'+ic('calendar')+'</div><div class="tx"><b>'+fmtDate(d)+'</b><span>'+bak[d].habits+' عادة · '+bak[d].tasks+' مهمة مفتوحة</span></div>'+
+     '<button class="btn soft sm" data-act="restore-backup" data-day="'+d+'">استعادة</button></div>').join('')+
+    '<p class="faint" style="font-size:11px;margin-top:8px">لقطة تلقائية من جهازك كل يوم — بلا أي إعداد منك.</p></div>':'';})()+
   '<div class="card sect"><div class="card-h"><h3>'+ic('archive')+'البيانات</h3></div>'+
    '<div style="display:grid;gap:9px">'+
    '<button class="btn soft wide" data-act="export">'+ic('download')+'تصدير نسخة احتياطية</button>'+
    '<button class="btn soft wide" data-act="import">'+ic('upload')+'استيراد نسخة</button>'+
+   '<button class="btn ghost wide" data-act="go-trash">'+ic('trash')+'المحذوفات ('+(S.trash.habits.length+S.trash.tasks.length+S.trash.goals.length)+')</button>'+
    '<button class="btn danger wide" data-act="wipe">'+ic('trash')+'مسح كل البيانات</button></div>'+
    '<p class="faint" style="font-size:11px;margin-top:10px">كل بياناتك محفوظة على جهازك فقط — لا خوادم ولا حسابات. صدّر نسخة قبل تغيير الجهاز.</p></div>'+
 
   (deferredPrompt?'<div class="sect"><button class="btn gold wide" data-act="install-app">'+ic('download')+'تثبيت «نَسَق» كتطبيق</button></div>':'')+
   '<div class="card sect"><div class="card-h"><h3>'+ic('info')+'حول</h3></div>'+
-   '<p style="font-size:13px;color:var(--ink2);line-height:1.9">«نَسَق» منصّةٌ واحدة لبناء عاداتك وتنظيم وقتك وتحقيق أهدافك — تعمل بالكامل دون اتصال، وتحفظ كل شيء على جهازك.<br>الإصدار ١.٤ · <span dir="ltr">@x150ll</span></p></div>'+
+   '<p style="font-size:13px;color:var(--ink2);line-height:1.9">«نَسَق» منصّةٌ واحدة لبناء عاداتك وتنظيم وقتك وتحقيق أهدافك — تعمل بالكامل دون اتصال، وتحفظ كل شيء على جهازك.<br>الإصدار ١.٥ · <span dir="ltr">@x150ll</span></p></div>'+
   '<input type="file" id="import-file" accept="application/json,.json" hidden>';
   const nm=$('#set-name');
   if(nm){let nt;
@@ -2140,7 +2267,7 @@ function openSettings(){openSub(()=>{const st=S.settings;
       toast(S.name?'حُفظ الاسم':'حُذف الاسم','check');};}
   const vol=$('#set-vol');if(vol)vol.oninput=()=>{S.settings.vol=vol.value/100;AU.setVol(S.settings.vol);};
   if(vol)vol.onchange=()=>save();
-  const imp=$('#import-file');if(imp)imp.onchange=e=>doImport(e.target.files[0]);
+  const imp=$('#import-file');if(imp)imp.onchange=e=>{doImport(e.target.files[0]);e.target.value='';};
 });}
 
 /* تصدير / استيراد / مسح */
@@ -2149,14 +2276,40 @@ function doExport(){const data=JSON.stringify(S);
   const url=URL.createObjectURL(blob),a=document.createElement('a');
   a.href=url;a.download='naasaq-backup-'+todayKey()+'.json';a.click();
   setTimeout(()=>URL.revokeObjectURL(url),1000);toast('صُدّرت النسخة الاحتياطية','download');}
+function askImportChoice(){return new Promise(res=>{
+  const m=$('#modal'),b=$('#modalBox');let result=null;
+  b.innerHTML='<h3>كيف تريد الاستيراد؟</h3><p>يمكنك دمج الملف مع بياناتك الحالية بأمان، أو استبدال كل شيء بمحتواه.</p>'+
+    '<div style="display:grid;gap:9px">'+
+    '<button class="btn gold wide" data-x="merge">'+ic('link2')+'دمج ذكي — يحافظ على الاثنين معًا</button>'+
+    '<button class="btn soft wide" data-x="replace">'+ic('refresh')+'استبدال كامل — يمحو الحالي</button>'+
+    '<button class="btn ghost wide" data-x="cancel">إلغاء</button></div>';
+  m.classList.add('on');updOvl();
+  Layers.push(()=>{m.classList.remove('on');updOvl();b.onclick=null;res(result);});
+  b.onclick=e=>{const x=e.target.closest('[data-x]');if(!x)return;
+    result=x.dataset.x==='cancel'?null:x.dataset.x;Layers.back();};
+});}
 function doImport(file){if(!file)return;const rd=new FileReader();
-  rd.onload=async()=>{try{const obj=JSON.parse(rd.result);
-    if(!obj||typeof obj!=='object'||!('habits'in obj))throw 0;
-    if(await askConfirm('استيراد نسخة','سيُستبدل كل ما لديك الآن بمحتوى الملف. متابعة؟','استيراد')){
-      S=Object.assign(DEF(),obj);save();toast('تم الاستيراد','check');
-      setTimeout(()=>location.reload(),500);}
-  }catch(e){toast('ملف غير صالح','ban');}};
+  rd.onload=()=>applyImportedJSON(rd.result);
+  rd.onerror=()=>toast('تعذّرت قراءة الملف','ban');
   rd.readAsText(file);}
+async function applyImportedJSON(text){let obj;
+  try{obj=JSON.parse(text);if(!obj||typeof obj!=='object'||!('habits'in obj))throw 0;}
+  catch(e){toast('ملف غير صالح','ban');return;}
+  const choice=await askImportChoice();if(!choice)return;
+  const norm=Object.assign(DEF(),obj);
+  norm.settings=Object.assign(DEF().settings,norm.settings);
+  norm.focus=Object.assign(DEF().focus,norm.focus);
+  norm.meta=Object.assign(DEF().meta,norm.meta);
+  norm.trash=Object.assign(DEF().trash,norm.trash);
+  if(choice==='replace'){
+    S=norm;save();toast('تم الاستبدال — سيُعاد التحميل','check');
+    setTimeout(()=>location.reload(),650);
+  }else{
+    const r=mergeState(S,norm);S=r.state;save();
+    toast('دُمجت البيانات: +'+r.addedHabits+' عادة، +'+r.addedTasks+' مهمة، +'+r.addedGoals+' هدف','link2');
+    setTimeout(()=>location.reload(),900);
+  }
+}
 async function doWipe(){if(await askConfirm('مسح كل البيانات','سيُحذف كل شيء نهائيًا: العادات والمهام والأهداف والسجلّ. لا يمكن التراجع.','امسح كل شيء',true)){
   localStorage.removeItem(DB);S=DEF();save();toast('مُسحت البيانات','trash');
   setTimeout(()=>location.reload(),500);}}
@@ -2345,6 +2498,16 @@ document.addEventListener('click',async e=>{
     case'go-goals':openGoals();break;
     case'go-stats':openStats();break;
     case'go-archive':openArchive();break;
+    case'go-trash':openTrash();break;
+    case'trash-restore':{if(restoreFromTrash(el.dataset.type,el.dataset.tid)){SFX.done();toast('استُعيدت بنجاح','refresh');rerender();}break;}
+    case'trash-del':{const type=el.dataset.type,tid=el.dataset.tid;
+      S.trash[type]=S.trash[type].filter(x=>x.tid!==tid);save();SFX.del();rerender();break;}
+    case'trash-empty':{const n=S.trash.habits.length+S.trash.tasks.length+S.trash.goals.length;if(!n)break;
+      if(await askConfirm('إفراغ المحذوفات','سيُحذف '+n+' عنصرًا نهائيًا بلا رجعة.','إفراغ',true)){
+        S.trash={habits:[],tasks:[],goals:[]};save();SFX.del();toast('أُفرغت المحذوفات','trash');rerender();}break;}
+    case'restore-backup':{const day=el.dataset.day;
+      if(await askConfirm('استعادة نسخة سابقة','سيُستبدل كل ما لديك الآن بحالة يوم '+fmtDate(day)+'. صدّر نسخة من الحالي أولًا إن أردت الاحتفاظ به.','استعادة',true))
+        restoreBackup(day);break;}
     case'beadgo':{const t=$('#'+el.dataset.t);if(t){t.scrollIntoView({behavior:'smooth',block:'center'});
       t.classList.add('flash');setTimeout(()=>t.classList.remove('flash'),900);}SFX.tap();break;}
     case'htoggle':toggleHabit(id,todayKey());rerender();break;
@@ -2364,26 +2527,26 @@ document.addEventListener('click',async e=>{
       toast(h.archived?'أُرشفت العادة':'أُعيدت العادة',h.archived?'archive':'refresh');
       if(SUB&&!h.archived){}rerender();break;}
     case'del-habit':{const h=habitById(id);if(!h)break;
-      if(await askConfirm('حذف العادة','سيُحذف «'+h.name+'» وكل سجلّه نهائيًا. متابعة؟','حذف',true)){
-        const idx=S.habits.indexOf(h);
+      if(await askConfirm('حذف العادة','سيُنقل «'+h.name+'» إلى المحذوفات لسبعة أيام، ثم يُحذف نهائيًا.','حذف',true)){
         const snap=JSON.parse(JSON.stringify(h));
         const logs={};for(const day in S.habitLog)if(S.habitLog[day]&&S.habitLog[day][id]!=null)logs[day]=S.habitLog[day][id];
         S.habits=S.habits.filter(x=>x.id!==id);
         for(const day in S.habitLog)if(S.habitLog[day])delete S.habitLog[day][id];
+        const tid=uid();S.trash.habits.push({tid,deletedAt:Date.now(),habit:snap,logs});
         save();SFX.del();
         if(sheetOpen())closeSheet();if(SUB)Layers.back();else rerender();
-        offerUndo('حُذفت العادة',()=>{S.habits.splice(Math.min(idx<0?S.habits.length:idx,S.habits.length),0,snap);
-          for(const day in logs){if(!S.habitLog[day])S.habitLog[day]={};S.habitLog[day][snap.id]=logs[day];}});}break;}
+        offerUndo('حُذفت العادة',()=>{restoreFromTrash('habits',tid);rerender();});}break;}
     case'tview':TASKVIEW=el.dataset.v;rerender();break;
     case'tfilter':TASKTAG=el.dataset.t||null;rerender();break;
     case'tq-clear':TASKQ='';rerender();break;
     case'clear-done':{const nn=S.tasks.filter(t=>t.done).length;if(!nn)break;
-      if(await askConfirm('حذف المكتملة','سيُحذف '+nn+' من المهام المكتملة نهائيًا. متابعة؟','حذف',true)){
-        const removed=S.tasks.map((x,i)=>[i,x]).filter(a=>a[1].done)
-          .map(a=>[a[0],JSON.parse(JSON.stringify(a[1]))]);
+      if(await askConfirm('حذف المكتملة','سيُنقل '+nn+' من المهام المكتملة إلى المحذوفات لسبعة أيام.','حذف',true)){
+        const tids=[];
+        for(const t of S.tasks.filter(x=>x.done)){const tid=uid();tids.push(tid);
+          S.trash.tasks.push({tid,deletedAt:Date.now(),task:JSON.parse(JSON.stringify(t))});}
         S.tasks=S.tasks.filter(x=>!x.done);save();SFX.del();rerender();
-        offerUndo('حُذفت '+removed.length+' مهمة مكتملة',()=>{DONE_OPEN=true;
-          for(const [i,x] of removed)S.tasks.splice(Math.min(i,S.tasks.length),0,x);});}break;}
+        offerUndo('حُذفت '+tids.length+' مهمة مكتملة',()=>{DONE_OPEN=true;
+          tids.forEach(tid=>restoreFromTrash('tasks',tid));rerender();});}break;}
     case'share-day':shareDay();break;
     case'immersive':{const on=document.body.classList.toggle('immersive');
       try{if(on&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen();
@@ -2394,11 +2557,13 @@ document.addEventListener('click',async e=>{
     case'stoggle':toggleSub(id,el.dataset.sid);rerender();break;
     case'tedit':{const t=taskById(id);taskForm(t);break;}
     case'del-task':{const t=taskById(id);if(!t)break;
-      if(await askConfirm('حذف المهمة','حذف «'+t.title+'»؟','حذف',true)){
-        const idx=S.tasks.indexOf(t);const snap=JSON.parse(JSON.stringify(t));
-        S.tasks=S.tasks.filter(x=>x.id!==id);save();SFX.del();
+      if(await askConfirm('حذف المهمة','سيُنقل «'+t.title+'» إلى المحذوفات لسبعة أيام.','حذف',true)){
+        const snap=JSON.parse(JSON.stringify(t));
+        S.tasks=S.tasks.filter(x=>x.id!==id);
+        const tid=uid();S.trash.tasks.push({tid,deletedAt:Date.now(),task:snap});
+        save();SFX.del();
         if(sheetOpen())closeSheet();rerender();
-        offerUndo('حُذفت المهمة',()=>{if(snap.done)DONE_OPEN=true;S.tasks.splice(Math.min(idx<0?S.tasks.length:idx,S.tasks.length),0,snap);});}break;}
+        offerUndo('حُذفت المهمة',()=>{if(snap.done)DONE_OPEN=true;restoreFromTrash('tasks',tid);rerender();});}break;}
     case'toggle-done':DONE_OPEN=!DONE_OPEN;rerender();break;
     case'mood':setMood(todayKey(),+el.dataset.v);rerender();break;
     case'go-focus-start':goTab('focus');if(!FT.running)setTimeout(()=>FT.start(),200);break;
@@ -2418,11 +2583,13 @@ document.addEventListener('click',async e=>{
     case'edit-goal':{const g=S.goals.find(x=>x.id===id);const w=sheetOpen();if(w)closeSheet();setTimeout(()=>goalForm(g),w?90:0);break;}
     case'mile':toggleMile(el.dataset.g,el.dataset.m);RENDER._sub&&RENDER._sub();break;
     case'del-goal':{const g=S.goals.find(x=>x.id===id);if(!g)break;
-      if(await askConfirm('حذف الهدف','حذف «'+g.title+'» ومراحله؟','حذف',true)){
-        const idx=S.goals.indexOf(g);const snap=JSON.parse(JSON.stringify(g));
-        S.goals=S.goals.filter(x=>x.id!==id);save();SFX.del();
+      if(await askConfirm('حذف الهدف','سيُنقل «'+g.title+'» إلى المحذوفات لسبعة أيام.','حذف',true)){
+        const snap=JSON.parse(JSON.stringify(g));
+        S.goals=S.goals.filter(x=>x.id!==id);
+        const tid=uid();S.trash.goals.push({tid,deletedAt:Date.now(),goal:snap});
+        save();SFX.del();
         if(sheetOpen())closeSheet();if(SUB)Layers.back();
-        offerUndo('حُذف الهدف',()=>{S.goals.splice(Math.min(idx<0?S.goals.length:idx,S.goals.length),0,snap);});break;}break;}
+        offerUndo('حُذف الهدف',()=>{restoreFromTrash('goals',tid);rerender();});break;}break;}
     case'set-theme':S.settings.theme=el.dataset.v;save();applyTheme();$$('#scr-sub [data-act="set-theme"]').forEach(b=>b.classList.toggle('on',b.dataset.v===el.dataset.v));SFX.tap();break;
     case'set-wstart':S.settings.weekStart=+el.dataset.v;save();$$('#scr-sub [data-act="set-wstart"]').forEach(b=>b.classList.toggle('on',+b.dataset.v===S.settings.weekStart));SFX.tap();rerender();break;
     case'try-sound':AU.ensure();SFX.done();break;
@@ -2451,8 +2618,13 @@ $('#celebrate').addEventListener('click',()=>$('#celebrate').classList.remove('o
 document.addEventListener('pointerdown',()=>AU.ensure(),{once:true});
 
 /* ================= ما الجديد ================= */
-const APP_VERSION='1.4.2';
+const APP_VERSION='1.5.0';
 const CHANGELOG=[
+ {v:'1.5.0',t:'تحديث ١.٥',items:[
+  'سلة محذوفات لسبعة أيام: أي حذف — عادة أو مهمة أو هدف — يبقى قابلًا للاستعادة',
+  'نسخة احتياطية تلقائية كل يوم على جهازك، تستعيدها بلمسة من الإعدادات',
+  'استيراد ذكي: ادمج نسخة من جهاز آخر مع بياناتك الحالية دون أن تفقد شيئًا',
+  'الوضع الفاتح/الداكن يتبع جهازك تلقائيًا في كل الشاشات — وحتى في شاشة الافتتاح']},
  {v:'1.4.2',t:'تحديث ١.٤.٢',items:[
   'شاشة افتتاح جديدة كليًا: ثلاث ثوانٍ تُرسم فيها السُّبحة ويشرق اسم نَسَق محفورًا',
   'إضافة اسمك أو تغييره صار متاحًا دائمًا: المس بطاقة مستواك في «المزيد»',
@@ -2558,7 +2730,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(FT.run
 document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)document.body.classList.remove('immersive');});
 
 /* ================= الإقلاع ================= */
-function boot(){Confetti.init();applyTheme();FT.init();
+function boot(){Confetti.init();applyTheme();FT.init();snapshotIfNewDay();purgeTrash();
   goTabNoHist('today');
   const hash=location.hash.replace('#','');
   if(hash==='focus'){goTab('focus');}
