@@ -1777,6 +1777,8 @@ function todayItems(){const k=todayKey();
     .sort((a,b)=>(a.done?1:0)-(b.done?1:0)||((a.time||'99')<(b.time||'99')?-1:1));
   return{habs,tasks,k};}
 RENDER.today=function(){const {habs,tasks,k}=todayItems();
+  const tmr=addDays(k,1);
+  const tmrPlanned=S.tasks.filter(t=>!t.done&&t.due===tmr).length;
   const doneH=habs.filter(h=>habitFulfilled(h,S.habitLog,k)).length;
   const doneT=tasks.filter(t=>t.done).length;
   const totalBeads=habs.length+tasks.length;
@@ -1823,7 +1825,12 @@ RENDER.today=function(){const {habs,tasks,k}=todayItems();
   '<div class="sect"><div class="card" style="display:flex;align-items:center;gap:14px">'+
    '<div class="ringw">'+ringSVG(64,7,fsess?Math.min(fsess/S.focus.rounds,1):0)+'<div class="rc"><div class="v num" style="font-size:15px">'+fsess+'</div><div class="l">جلسات</div></div></div>'+
    '<div style="flex:1"><b style="font-size:14.5px">جاهز لجولة تركيز؟</b><div class="faint" style="font-size:11.5px;font-weight:600">'+S.focus.work+' دقيقة عمل · '+S.focus.short+' استراحة</div></div>'+
-   '<button class="btn gold sm" data-act="go-focus-start">'+ic('play')+'ابدأ</button></div></div>';
+   '<button class="btn gold sm" data-act="go-focus-start">'+ic('play')+'ابدأ</button></div></div>'+
+
+  (tmrPlanned?'':'<div class="sect"><div class="card flat" style="display:flex;align-items:center;gap:11px;padding:14px 15px;cursor:pointer" data-act="plan-tomorrow">'+
+   '<div class="hic" style="width:38px;height:38px;border-radius:13px;background:color-mix(in srgb,var(--azure) 15%,transparent);color:var(--azure)">'+ic('sunrise')+'</div>'+
+   '<div style="flex:1"><b style="font-size:13.5px">خطّط لغدك</b><div class="faint" style="font-size:11px;margin-top:2px">اختر مهامّ الغد قبل أن تنام</div></div>'+
+   ic('back','i')+'</div></div>');
   const note=$('#today-note');
   if(note)note.onchange=()=>{setNote(k,note.value);toast('حُفظت اليوميات','pen');};
 };
@@ -1867,6 +1874,7 @@ function openHabitDetail(id){openSub(()=>{const h=habitById(id);
    (h.type==='count'?'<span class="chip azure">'+h.target+' '+esc(h.unit||'مرة')+'</span>':'')+
    (h.reminder?'<span class="chip gold">'+ic('alarm')+h.reminder+'</span>':'')+'</div></div>'+
    habitControl(h,t)+'</div>'+
+  (h.reminder?'<button class="btn soft wide sect" data-act="add-cal" data-id="'+h.id+'">'+ic('calendar')+'أضِف تذكيرًا لتقويم جهازك — يعمل والتطبيق مغلق تمامًا</button>':'')+
   '<div class="card sect" style="--hc:'+h.color+'"><div class="card-h"><h3>'+ic('calendar')+'تسجيل الأيام الماضية</h3></div>'+
   '<div class="d7">'+[6,5,4,3,2,1,0].map(i=>{const kk=addDays(t,-i);
     const sch=(h.freq.kind==='days'?h.freq.days.includes(weekdayOf(kk)):true);
@@ -2001,7 +2009,8 @@ function focusSettingsSheet(){openSheet(
 
 /* ================= المزيد ================= */
 RENDER.more=function(){const L=levelOf(S.xp);
-  const rows=[['go-goals','target','الأهداف','مراحل وتقدّم وربط بالعادات',S.goals.filter(g=>!g.done).length+' نشط'],
+  const rows=[['go-week','calendar','مراجعة الأسبوع','التزامك ومزاجك وتركيزك',''],
+   ['go-goals','target','الأهداف','مراحل وتقدّم وربط بالعادات',S.goals.filter(g=>!g.done).length+' نشط'],
    ['go-stats','chart','الإحصائيات','التزامك وتركيزك بالأرقام',''],
    ['go-journal','journal','اليوميات','مزاجك وسطور أيامك',''],
    ['go-ach','trophy','الإنجازات','أوسمة رحلتك',Object.keys(S.ach).length+' / '+ACH.length],
@@ -2198,6 +2207,118 @@ async function shareDay(){const k=todayKey();
       else toast('المشاركة غير مدعومة هنا — استخدم تنزيل','info');
     }catch(e){}};});
 }
+
+/* ================= مراجعة الأسبوع ================= */
+function weekRange(){return{from:weekStartOf(todayKey(),S.settings.weekStart),to:todayKey()};}
+function weekStats(){const {from,to}=weekRange();
+  const act=S.habits.filter(h=>!h.archived);
+  let sch=0,ok=0,k=from;
+  while(k<=to){for(const h of act)if(habitScheduledOn(h,k)){sch++;if(habitFulfilled(h,S.habitLog,k))ok++;}k=addDays(k,1);}
+  const commit=sch?Math.round(ok/sch*100):0;
+  const best=act.length?Math.max(0,...act.map(h=>habitStreak(h,S.habitLog,todayKey(),S.settings.weekStart))):0;
+  let focusMin=0;k=from;while(k<=to){focusMin+=S.focus.log[k]||0;k=addDays(k,1);}
+  const tasksDone=S.tasks.filter(t=>t.done&&t.doneAt&&dkey(new Date(t.doneAt))>=from&&dkey(new Date(t.doneAt))<=to).length;
+  const moods=[];k=from;while(k<=to){moods.push({k,mood:((S.journal[k]||{}).mood)||0});k=addDays(k,1);}
+  return{from,to,commit,best,focusMin,tasksDone,moods};}
+function openWeekReview(){openSub(()=>{const st=weekStats();
+  $('#scr-sub').innerHTML=subHead('مراجعة الأسبوع','<button class="icobtn gold" data-act="share-week">'+ic('share')+'</button>')+
+   '<p class="faint" style="font-size:11.5px;margin:-4px 0 14px">'+fmtShort(st.from)+' — '+fmtShort(st.to)+'</p>'+
+   '<div class="statgrid">'+
+    '<div class="stat"><div class="sl">'+ic('leaf')+'التزامك</div><div class="sv num">'+st.commit+'<small>٪</small></div></div>'+
+    '<div class="stat"><div class="sl">'+ic('flame')+'أطول سلسلة</div><div class="sv num">'+st.best+'<small>يوم</small></div></div>'+
+    '<div class="stat"><div class="sl">'+ic('timer')+'دقائق التركيز</div><div class="sv num">'+st.focusMin+'</div></div>'+
+    '<div class="stat"><div class="sl">'+ic('tasks')+'مهام أنجزتها</div><div class="sv num">'+st.tasksDone+'</div></div></div>'+
+   '<div class="card sect"><div class="card-h"><h3>'+ic('mood3')+'منحنى مزاجك</h3></div>'+
+    '<div style="display:flex;justify-content:space-between;align-items:flex-end;padding:6px 2px 0">'+
+     st.moods.map(m=>'<div style="display:flex;flex-direction:column;align-items:center;gap:7px;flex:1">'+
+      (m.mood?ic('mood'+m.mood):'<div style="width:22px;height:22px;border-radius:99px;background:var(--heat0)"></div>')+
+      '<span class="faint" style="font-size:10px">'+WD_MIN[weekdayOf(m.k)]+'</span></div>').join('')+
+    '</div></div>'+
+   (st.commit>=80?'<div class="card flat sect" style="text-align:center;padding:22px"><b style="font-size:14px;color:var(--basil)">أسبوعٌ قويّ — واصل بنفس الوتيرة</b></div>'
+   :st.commit>=40?'<div class="card flat sect" style="text-align:center;padding:22px"><b style="font-size:14px">تقدّمٌ لا بأس به — قليل من الثبات يصنع الفارق</b></div>'
+   :'<div class="card flat sect" style="text-align:center;padding:22px"><b style="font-size:14px;color:var(--ink2)">أسبوعٌ هادئ — القادم فرصة جديدة</b></div>');
+});}
+async function shareWeek(){const st=weekStats();
+  try{if(document.fonts)await document.fonts.ready;}catch(e){}
+  const W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;
+  const x=c.getContext('2d');
+  x.fillStyle='#0E1613';x.fillRect(0,0,W,H);
+  x.globalAlpha=.05;
+  for(let i=0;i<900;i++){x.fillStyle=i%2?'#fff':'#000';x.fillRect(Math.random()*W,Math.random()*H,1.7,1.7);}
+  x.globalAlpha=1;
+  x.strokeStyle='rgba(233,180,76,.4)';x.lineWidth=3;x.strokeRect(38,38,W-76,H-76);
+  x.strokeStyle='rgba(233,180,76,.13)';x.lineWidth=2;x.strokeRect(56,56,W-112,H-112);
+  const gold='#E9B44C',basil='#5ECD9F',ink='#EDEDE6',ink3='#8A9590';
+  x.textAlign='center';try{x.direction='rtl';}catch(e){}
+  x.fillStyle=gold;x.font='800 88px Alexandria';x.fillText('مراجعة أسبوعي',W/2,190);
+  x.fillStyle=ink3;x.font='600 28px PlexAr';
+  x.fillText(fmtShort(st.from)+' — '+fmtShort(st.to),W/2,246);
+  const y0=350,r=88;
+  x.beginPath();x.arc(W/2,y0+r,r,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.min(st.commit,100)/100);
+  x.strokeStyle='#1C2A24';x.lineWidth=16;x.beginPath();x.arc(W/2,y0+r,r,0,7);x.stroke();
+  x.strokeStyle=gold;x.beginPath();x.arc(W/2,y0+r,r,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.min(st.commit,100)/100);x.stroke();
+  x.fillStyle=ink;x.font='800 56px Alexandria';x.fillText(st.commit+'٪',W/2,y0+r+18);
+  x.fillStyle=ink3;x.font='700 24px PlexAr';x.fillText('التزامك هذا الأسبوع',W/2,y0+r*2+62);
+  const cards=[[String(st.best),'أطول سلسلة'],[fmtMin(st.focusMin),'تركيز'],[String(st.tasksDone),'مهام مُنجزة']];
+  const cw=(W-160-80)/3;let sx=80;const sy=690;
+  for(const [v,l] of cards){
+    x.fillStyle='#17231F';roundR(x,sx,sy,cw,180,26);x.fill();
+    x.strokeStyle='#243830';x.lineWidth=2;roundR(x,sx,sy,cw,180,26);x.stroke();
+    x.fillStyle=gold;x.font='800 50px Alexandria';x.fillText(v,sx+cw/2,sy+92);
+    x.fillStyle=ink3;x.font='700 25px PlexAr';x.fillText(l,sx+cw/2,sy+144);
+    sx+=cw+40;}
+  const my=985,mw=W-260,mx0=130+ (mw - mw)/2;
+  x.strokeStyle='#243830';x.lineWidth=2;x.beginPath();x.moveTo(130,my);x.lineTo(W-130,my);x.stroke();
+  const n=st.moods.length,step=(W-260)/(n-1);
+  x.beginPath();let started=false;
+  st.moods.forEach((m,i)=>{if(!m.mood)return;const px=130+i*step,py=my-(m.mood-1)*22;
+    if(!started){x.moveTo(px,py);started=true;}else x.lineTo(px,py);});
+  x.strokeStyle=basil;x.lineWidth=4;x.stroke();
+  st.moods.forEach((m,i)=>{const px=130+i*step;
+    if(m.mood){const py=my-(m.mood-1)*22;x.beginPath();x.arc(px,py,7,0,7);x.fillStyle=basil;x.fill();}
+    x.fillStyle=ink3;x.font='600 20px PlexAr';x.fillText(WD_MIN[weekdayOf(m.k)],px,my+34);});
+  x.fillStyle=ink3;x.font='700 24px PlexAr';x.fillText('مزاج الأسبوع',W/2,my-70);
+  x.fillStyle='rgba(233,180,76,.55)';x.fillRect(W/2-40,H-140,80,3);
+  x.fillStyle=gold;x.font='800 32px Alexandria';try{x.direction='ltr';}catch(e){}
+  x.fillText('naasaq.pages.dev',W/2,H-84);
+  const url=c.toDataURL('image/png');
+  openSheet('<h2>'+ic('share')+'بطاقة أسبوعك</h2>'+
+    '<img src="'+url+'" alt="" style="width:100%;border-radius:18px;border:1px solid var(--line);display:block">'+
+    '<div class="row2" style="margin-top:12px"><button class="btn gold" id="shw-share">'+ic('share')+'مشاركة</button>'+
+    '<button class="btn soft" id="shw-dl">'+ic('download')+'تنزيل</button></div>',
+  sh=>{sh.querySelector('#shw-dl').onclick=()=>{const a=document.createElement('a');
+      a.href=url;a.download='naasaq-week-'+todayKey()+'.png';a.click();toast('نُزّلت البطاقة','download');};
+    sh.querySelector('#shw-share').onclick=async()=>{try{
+      const blob=await (await fetch(url)).blob();
+      const file=new File([blob],'naasaq-week.png',{type:'image/png'});
+      if(navigator.canShare&&navigator.canShare({files:[file]}))
+        await navigator.share({files:[file],title:'نَسَق — مراجعة أسبوعي'});
+      else toast('المشاركة غير مدعومة هنا — استخدم تنزيل','info');
+    }catch(e){}};});
+}
+
+/* ================= تذكير تقويم النظام (يعمل والتطبيق مغلق تمامًا) ================= */
+function buildICS(h){const[hh,mm]=(h.reminder||'09:00').split(':').map(Number);
+  const now=new Date(),pad=n=>String(n).padStart(2,'0');
+  const dtstamp=now.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
+  const dtstart=now.getFullYear()+pad(now.getMonth()+1)+pad(now.getDate())+'T'+pad(hh)+pad(mm)+'00';
+  const map=['SU','MO','TU','WE','TH','FR','SA'];
+  const rrule=h.freq.kind==='days'?'FREQ=WEEKLY;BYDAY='+h.freq.days.map(d=>map[d]).join(','):
+    h.freq.kind==='weekly'?'FREQ=WEEKLY':'FREQ=DAILY';
+  const esc2=s=>String(s).replace(/[\\;,]/g,m=>'\\'+m).replace(/\n/g,'\\n');
+  return['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//NASAQ//Habit Reminder//AR','CALSCALE:GREGORIAN',
+   'BEGIN:VEVENT','UID:'+uid()+'@naasaq.pages.dev','DTSTAMP:'+dtstamp,'DTSTART:'+dtstart,
+   'RRULE:'+rrule,'SUMMARY:'+esc2('نَسَق — '+h.name),
+   'DESCRIPTION:'+esc2('خرزة اليوم بانتظارك — لا تكسر السلسلة'),'DURATION:PT10M',
+   'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+esc2(h.name),'TRIGGER:-PT0M','END:VALARM',
+   'END:VEVENT','END:VCALENDAR'].join('\r\n');}
+function exportHabitToCalendar(id){const h=habitById(id);
+  if(!h||!h.reminder){toast('أضف وقت تذكير لهذه العادة أولًا','alarm');return;}
+  const blob=new Blob([buildICS(h)],{type:'text/calendar;charset=utf-8'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='nasaq-'+h.id+'.ics';a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+  toast('افتح الملف لإضافته كتذكير دائم في تقويم جهازك','calendar');}
 
 /* ================= الأرشيف ================= */
 function openArchive(){openSub(()=>{const arch=S.habits.filter(h=>h.archived);
@@ -2426,6 +2547,30 @@ function goalForm(g){const ed=!!g;g=g||{title:'',desc:'',deadline:'',color:HB_CO
      save();closeSheet();rerender();};
   });}
 
+function planTomorrowSheet(){const tmr=addDays(todayKey(),1);
+  const cand=S.tasks.filter(t=>!t.done&&t.due!==tmr);
+  openSheet('<h2>'+ic('sunrise')+'خطّط لغدك</h2>'+
+   '<p class="faint" style="font-size:12px;margin:-6px 0 12px">'+fmtDate(tmr)+'</p>'+
+   '<div class="fld"><input class="inp" id="pt-add" placeholder="أضف مهمة جديدة لغدٍ مباشرة…"></div>'+
+   (cand.length?'<div class="faint" style="font-size:11px;margin:2px 0 8px">أو اختر من مهامك الحالية:</div>'+
+    '<div id="pt-list">'+cand.map(t=>'<button class="mt" data-id="'+t.id+'" style="width:100%;margin-bottom:6px"><i>'+ic('check')+'</i><span>'+esc(t.title)+'</span></button>').join('')+'</div>'
+   :'')+
+   '<button class="btn gold wide" id="pt-save" style="margin-top:12px">تأكيد خطة الغد</button>',
+  sh=>{const picked=new Set();
+   const list=sh.querySelector('#pt-list');
+   if(list)list.onclick=e=>{const b=e.target.closest('[data-id]');if(!b)return;
+     const id=b.dataset.id;if(picked.has(id)){picked.delete(id);b.classList.remove('y');}else{picked.add(id);b.classList.add('y');}};
+   const addInp=sh.querySelector('#pt-add');
+   addInp.onkeydown=e=>{if(e.key==='Enter')sh.querySelector('#pt-save').click();};
+   sh.querySelector('#pt-save').onclick=()=>{
+     picked.forEach(id=>{const t=taskById(id);if(t)t.due=tmr;});
+     const q=addInp.value.trim()?parseQuick(addInp.value,todayKey()):null;
+     if(q&&q.t)S.tasks.push({id:uid(),title:q.t,notes:'',due:tmr,time:null,pr:q.pr,tag:null,subs:[],repeat:'none',done:false,doneAt:null,createdAt:Date.now()});
+     const n=picked.size+(q&&q.t?1:0);
+     save();closeSheet();rerender();
+     if(n){SFX.done();toast('جُدولت '+n+' مهمة لغدك','calendar');}else toast('لم تُجدول أي مهمة','info');
+   };
+  });}
 function templatesSheet(){let picked=new Set();
   openSheet('<h2>'+ic('sparkle')+'قوالب جاهزة</h2><p class="faint" style="margin:-6px 0 4px;font-size:12.5px">اختر ما يناسبك وابدأ فورًا — يمكنك تعديلها لاحقًا.</p>'+
    '<div class="tmpl" id="tmpl-grid">'+TEMPLATES.map((t,i)=>'<button data-i="'+i+'"><div class="ti">'+ic(t.i)+'</div><b>'+esc(t.n)+'</b></button>').join('')+'</div>'+
@@ -2497,6 +2642,10 @@ document.addEventListener('click',async e=>{
     case'go-journal':openJournal();break;
     case'go-goals':openGoals();break;
     case'go-stats':openStats();break;
+    case'go-week':openWeekReview();break;
+    case'share-week':shareWeek();break;
+    case'add-cal':exportHabitToCalendar(id);break;
+    case'plan-tomorrow':planTomorrowSheet();break;
     case'go-archive':openArchive();break;
     case'go-trash':openTrash();break;
     case'trash-restore':{if(restoreFromTrash(el.dataset.type,el.dataset.tid)){SFX.done();toast('استُعيدت بنجاح','refresh');rerender();}break;}
@@ -2618,8 +2767,13 @@ $('#celebrate').addEventListener('click',()=>$('#celebrate').classList.remove('o
 document.addEventListener('pointerdown',()=>AU.ensure(),{once:true});
 
 /* ================= ما الجديد ================= */
-const APP_VERSION='1.5.0';
+const APP_VERSION='1.6.0';
 const CHANGELOG=[
+ {v:'1.6.0',t:'تحديث ١.٦',items:[
+  'إصلاح مهم: التحديثات لم تعد تُثبَّت تلقائيًا أبدًا — فقط بموافقتك الصريحة عبر زر «تحديث الآن»',
+  'مراجعة الأسبوع: التزامك وأطول سلسلة ودقائق تركيزك ومنحنى مزاجك في شاشة واحدة، وبطاقة مشاركة',
+  'تذكير عادة إلى تقويم جهازك — يعمل حتى والتطبيق مغلق تمامًا',
+  '«خطّط لغدك»: اختر مهام الغد من مساء اليوم']},
  {v:'1.5.0',t:'تحديث ١.٥',items:[
   'سلة محذوفات لسبعة أيام: أي حذف — عادة أو مهمة أو هدف — يبقى قابلًا للاستعادة',
   'نسخة احتياطية تلقائية كل يوم على جهازك، تستعيدها بلمسة من الإعدادات',

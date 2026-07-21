@@ -1,5 +1,5 @@
 /* نَسَق — Service Worker */
-const VERSION = 'naasaq-v1.5.0';
+const VERSION = 'naasaq-v1.6.0';
 const ASSETS = [
   './',
   './index.html',
@@ -12,10 +12,11 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (e) => {
-  /* إنقاذ لمرة واحدة: يفعّل نفسه فورًا ليحرّر العالقين على محرّك 1.2
-     (كاش-أولًا بلا زر تحديث دائم) — صفحتهم تعيد التحميل تلقائيًا عبر
-     مستمع controllerchange الموجود لديها. يُعاد سلوك الموافقة في 1.5. */
-  self.skipWaiting();
+  /* لا تفعيل تلقائي بأي حال: العامل الجديد يبقى "بانتظار" حتى يوافق
+     المستخدم بالضغط على زر «تحديث الآن» في التطبيق، الذي يرسل رسالة
+     SKIP_WAITING صراحةً (انظر معالج 'message' أدناه). محتوى الصفحة
+     نفسه يبقى محدَّثًا دائمًا بفضل استراتيجية "الشبكة أولًا" للتنقّل
+     في معالج 'fetch' — فتأجيل تفعيل العامل لا يعني تأجيل وصول التحديثات. */
   e.waitUntil(
     caches.open(VERSION).then((c) => c.addAll(ASSETS.map((u) => new Request(u, { cache: 'reload' }))))
   );
