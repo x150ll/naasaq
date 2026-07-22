@@ -1313,15 +1313,19 @@ function openSheet(html,onOpen){const sh=$('#sheet');sh.innerHTML='<div class="g
   Layers.push(()=>{sh.classList.remove('on');updOvl();});
   if(onOpen)onOpen(sh);}
 function closeSheet(){Layers.back();}
-function askConfirm(title,msg,okLabel,danger){return new Promise(res=>{
+let MODAL_BUSY=false;
+function askConfirm(title,msg,okLabel,danger){
+  if(MODAL_BUSY)return Promise.resolve(false);
+  MODAL_BUSY=true;
+  return new Promise(res=>{
   const m=$('#modal'),b=$('#modalBox');let result=false;
   b.innerHTML='<h3>'+esc(title)+'</h3><p>'+esc(msg)+'</p>'+
     '<div style="display:flex;gap:9px"><button class="btn soft" style="flex:1" data-x="0">إلغاء</button>'+
     '<button class="btn '+(danger?'danger':'gold')+'" style="flex:1" data-x="1">'+esc(okLabel||'تأكيد')+'</button></div>';
   m.classList.add('on');updOvl();
-  Layers.push(()=>{m.classList.remove('on');updOvl();b.onclick=null;res(result);});
+  Layers.push(()=>{m.classList.remove('on');updOvl();b.onclick=null;MODAL_BUSY=false;res(result);});
   b.onclick=e=>{const x=e.target.closest('[data-x]');if(!x)return;
-    result=x.dataset.x==='1';Layers.back();};
+    b.onclick=null;result=x.dataset.x==='1';Layers.back();};
 });}
 
 /* ================= قصاصات الاحتفال ================= */
@@ -1832,7 +1836,8 @@ RENDER.today=function(){const {habs,tasks,k}=todayItems();
    '<div style="flex:1"><b style="font-size:13.5px">خطّط لغدك</b><div class="faint" style="font-size:11px;margin-top:2px">اختر مهامّ الغد قبل أن تنام</div></div>'+
    ic('back','i')+'</div></div>');
   const note=$('#today-note');
-  if(note)note.onchange=()=>{setNote(k,note.value);toast('حُفظت اليوميات','pen');};
+  if(note){note.oninput=()=>setNote(k,note.value);
+    note.onchange=()=>toast('حُفظت اليوميات','pen');}
 };
 
 /* ================= شاشة العادات ================= */
@@ -2126,7 +2131,8 @@ function openJournal(){openSub(()=>{const k=todayKey();const j=S.journal[k]||{mo
     (e.note?'<p>'+esc(e.note)+'</p>':'')+'</div>';}).join('')
   :'<div class="empty" style="padding:20px"><b>لا تدوينات بعد</b><p>سطر واحد كل مساء يكفي لتقرأ عامك لاحقًا كقصة.</p></div>')+'</div>';
   const n=$('#jn-note');
-  if(n)n.onchange=()=>{setNote(k,n.value);toast('حُفظت اليوميات','pen');};
+  if(n){n.oninput=()=>setNote(k,n.value);
+    n.onchange=()=>toast('حُفظت اليوميات','pen');}
 });}
 
 /* ================= الإنجازات ================= */
@@ -2397,7 +2403,10 @@ function doExport(){const data=JSON.stringify(S);
   const url=URL.createObjectURL(blob),a=document.createElement('a');
   a.href=url;a.download='naasaq-backup-'+todayKey()+'.json';a.click();
   setTimeout(()=>URL.revokeObjectURL(url),1000);toast('صُدّرت النسخة الاحتياطية','download');}
-function askImportChoice(){return new Promise(res=>{
+function askImportChoice(){
+  if(MODAL_BUSY)return Promise.resolve(null);
+  MODAL_BUSY=true;
+  return new Promise(res=>{
   const m=$('#modal'),b=$('#modalBox');let result=null;
   b.innerHTML='<h3>كيف تريد الاستيراد؟</h3><p>يمكنك دمج الملف مع بياناتك الحالية بأمان، أو استبدال كل شيء بمحتواه.</p>'+
     '<div style="display:grid;gap:9px">'+
@@ -2405,9 +2414,9 @@ function askImportChoice(){return new Promise(res=>{
     '<button class="btn soft wide" data-x="replace">'+ic('refresh')+'استبدال كامل — يمحو الحالي</button>'+
     '<button class="btn ghost wide" data-x="cancel">إلغاء</button></div>';
   m.classList.add('on');updOvl();
-  Layers.push(()=>{m.classList.remove('on');updOvl();b.onclick=null;res(result);});
+  Layers.push(()=>{m.classList.remove('on');updOvl();b.onclick=null;MODAL_BUSY=false;res(result);});
   b.onclick=e=>{const x=e.target.closest('[data-x]');if(!x)return;
-    result=x.dataset.x==='cancel'?null:x.dataset.x;Layers.back();};
+    b.onclick=null;result=x.dataset.x==='cancel'?null:x.dataset.x;Layers.back();};
 });}
 function doImport(file){if(!file)return;const rd=new FileReader();
   rd.onload=()=>applyImportedJSON(rd.result);
@@ -2460,7 +2469,8 @@ function habitForm(h){const ed=!!h;h=h||{name:'',icon:'leaf',color:HB_COLORS[0],
    sh.querySelector('#h-colors').onclick=e=>{const b=e.target.closest('[data-c]');if(!b)return;sel.color=b.dataset.c;$$('#h-colors button').forEach(x=>x.classList.toggle('on',x===b));};
    sh.querySelector('#h-type').onclick=e=>{const b=e.target.closest('[data-v]');if(!b)return;sel.type=b.dataset.v;$$('#h-type button').forEach(x=>x.classList.toggle('on',x===b));sh.querySelector('#h-count').classList.toggle('hide',sel.type!=='count');};
    sh.querySelector('#h-fk').onclick=e=>{const b=e.target.closest('[data-v]');if(!b)return;sel.fk=b.dataset.v;$$('#h-fk button').forEach(x=>x.classList.toggle('on',x===b));
-     sh.querySelector('#h-days').classList.toggle('hide',sel.fk!=='days');sh.querySelector('#h-weekly').classList.toggle('hide',sel.fk!=='weekly');};
+     sh.querySelector('#h-days').classList.toggle('hide',sel.fk!=='days');sh.querySelector('#h-weekly').classList.toggle('hide',sel.fk!=='weekly');
+     if(sel.fk==='days')$$('#h-daysel button').forEach((x,i)=>x.classList.toggle('on',sel.days.includes(i)));};
    sh.querySelector('#h-daysel').onclick=e=>{const b=e.target.closest('[data-d]');if(!b)return;const d=+b.dataset.d;
      if(sel.days.includes(d))sel.days=sel.days.filter(x=>x!==d);else sel.days.push(d);b.classList.toggle('on');};
    sh.querySelector('#h-period').onclick=e=>{const b=e.target.closest('[data-v]');if(!b)return;sel.period=b.dataset.v;$$('#h-period button').forEach(x=>x.classList.toggle('on',x===b));};
@@ -2767,8 +2777,11 @@ $('#celebrate').addEventListener('click',()=>$('#celebrate').classList.remove('o
 document.addEventListener('pointerdown',()=>AU.ensure(),{once:true});
 
 /* ================= ما الجديد ================= */
-const APP_VERSION='1.6.0';
+const APP_VERSION='1.6.1';
 const CHANGELOG=[
+ {v:'1.6.1',t:'تحديث ١.٦.١ — تصليب',items:[
+  'تنبيه جديد وغير مزعج إن فتحت نَسَق في أكثر من تبويب بالخطأ، مع خيار تحديث بلمستك أنت لا تلقائيًا',
+  'تدقيق أمان وأداء شامل: لا تأثير مرئي، لكن التطبيق الآن أصلب أمام حالات نادرة (بيانات كثيفة، استيراد تالف، امتلاء المساحة)']},
  {v:'1.6.0',t:'تحديث ١.٦',items:[
   'إصلاح مهم: التحديثات لم تعد تُثبَّت تلقائيًا أبدًا — فقط بموافقتك الصريحة عبر زر «تحديث الآن»',
   'مراجعة الأسبوع: التزامك وأطول سلسلة ودقائق تركيزك ومنحنى مزاجك في شاشة واحدة، وبطاقة مشاركة',
@@ -2861,6 +2874,18 @@ if('serviceWorker'in navigator){
   navigator.serviceWorker.addEventListener('controllerchange',()=>{if(reloaded)return;reloaded=true;location.reload();});
 }
 window.addEventListener('online',()=>{updateSnoozed=false;maybeShowUpdate();});
+
+/* ================= تنبيه فتح نَسَق في أكثر من تبويب ================= */
+let crossTabWarned=false;
+window.addEventListener('storage',e=>{
+  if(e.key!==DB||crossTabWarned||e.newValue===e.oldValue)return;
+  crossTabWarned=true;
+  const t=document.createElement('div');t.className='toast';
+  t.innerHTML=ic('refresh')+'نَسَق مفتوح في تبويب آخر أيضًا — قد يختلف ما تراه هنا<button class="ubtn">تحديث</button>';
+  $('#toasts').append(t);
+  t.querySelector('.ubtn').onclick=()=>location.reload();
+  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),320);crossTabWarned=false;},7000);
+});
 $('#bnUpdateGo').onclick=()=>{
   if(!navigator.onLine){SFX.error();toast('لا اتصال بالإنترنت — سيبقى التحديث بانتظار عودته','ban');return;}
   $('#bnUpdate').classList.remove('on');
@@ -2872,7 +2897,7 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;
   if(!standalone&&Date.now()-(S.meta.installDismiss||0)>3*864e5)
     setTimeout(()=>$('#bnInstall').classList.add('on'),4000);});
 $('#bnInstallGo').onclick=async()=>{$('#bnInstall').classList.remove('on');
-  if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;}};
+  if(deferredPrompt){const dp=deferredPrompt;deferredPrompt=null;dp.prompt();await dp.userChoice;}};
 $('#bnInstallX').onclick=()=>{$('#bnInstall').classList.remove('on');S.meta.installDismiss=Date.now();save();};
 
 window.addEventListener('hashchange',()=>{const hs=location.hash.replace('#','');
