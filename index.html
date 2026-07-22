@@ -2030,7 +2030,7 @@ RENDER.more=function(){const L=levelOf(S.xp);
   '<div class="card sect" style="padding:4px 16px">'+rows.map(r=>
    '<button class="srow" style="width:100%;text-align:start;background:none;border-inline:0;border-top:0" data-act="'+r[0]+'"><div class="ic">'+ic(r[1])+'</div>'+
    '<div class="tx"><b>'+r[2]+'</b><span>'+r[3]+'</span></div>'+(r[4]?'<span class="chip">'+r[4]+'</span>':'')+ic('back','i')+'</button>').join('')+'</div>'+
-  '<p class="faint" style="text-align:center;font-size:11px;margin-top:22px">نَسَق ١.٥ — يعمل بالكامل دون اتصال<br>صُنع بإتقان · <span dir="ltr">@x150ll</span></p>';
+  '<p class="faint" style="text-align:center;font-size:11px;margin-top:22px">نَسَق '+arDigits(APP_VERSION)+' — يعمل بالكامل دون اتصال<br>صُنع بإتقان · <span dir="ltr">@x150ll</span></p>';
 };
 
 /* ================= الأهداف ================= */
@@ -2385,7 +2385,8 @@ function openSettings(){openSub(()=>{const st=S.settings;
 
   (deferredPrompt?'<div class="sect"><button class="btn gold wide" data-act="install-app">'+ic('download')+'تثبيت «نَسَق» كتطبيق</button></div>':'')+
   '<div class="card sect"><div class="card-h"><h3>'+ic('info')+'حول</h3></div>'+
-   '<p style="font-size:13px;color:var(--ink2);line-height:1.9">«نَسَق» منصّةٌ واحدة لبناء عاداتك وتنظيم وقتك وتحقيق أهدافك — تعمل بالكامل دون اتصال، وتحفظ كل شيء على جهازك.<br>الإصدار ١.٥ · <span dir="ltr">@x150ll</span></p></div>'+
+   '<p style="font-size:13px;color:var(--ink2);line-height:1.9">«نَسَق» منصّةٌ واحدة لبناء عاداتك وتنظيم وقتك وتحقيق أهدافك — تعمل بالكامل دون اتصال، وتحفظ كل شيء على جهازك.<br>الإصدار '+arDigits(APP_VERSION)+' · <span dir="ltr">@x150ll</span></p>'+
+   '<button class="btn ghost wide" data-act="view-changelog" style="margin-top:10px">'+ic('sparkle')+'سجلّ التحديثات</button></div>'+
   '<input type="file" id="import-file" accept="application/json,.json" hidden>';
   const nm=$('#set-name');
   if(nm){let nt;
@@ -2653,6 +2654,7 @@ document.addEventListener('click',async e=>{
     case'go-goals':openGoals();break;
     case'go-stats':openStats();break;
     case'go-week':openWeekReview();break;
+    case'view-changelog':viewChangelog();break;
     case'share-week':shareWeek();break;
     case'add-cal':exportHabitToCalendar(id);break;
     case'plan-tomorrow':planTomorrowSheet();break;
@@ -2778,6 +2780,7 @@ document.addEventListener('pointerdown',()=>AU.ensure(),{once:true});
 
 /* ================= ما الجديد ================= */
 const APP_VERSION='1.6.1';
+const arDigits=s=>String(s).replace(/[0-9]/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
 const CHANGELOG=[
  {v:'1.6.1',t:'تحديث ١.٦.١ — تصليب',items:[
   'تنبيه جديد وغير مزعج إن فتحت نَسَق في أكثر من تبويب بالخطأ، مع خيار تحديث بلمستك أنت لا تلقائيًا',
@@ -2816,14 +2819,16 @@ const CHANGELOG=[
   'الأجواء الصوتية ترتبط بالمؤقّت: تعمل معه وتصمت بإيقافه',
   'إضافة المهام تفهم «غدًا» و«بعد غد» بذكاء أدق',
   'تحسينات دقيقة للنقاط والمستويات']}];
+function changelogHTML(list){return list.map(c=>'<div class="fld" style="margin-bottom:4px"><label>'+esc(c.t)+'</label>'+
+    c.items.map(it=>'<div style="display:flex;gap:9px;align-items:flex-start;padding:6px 0"><div style="width:22px;height:22px;border-radius:8px;background:color-mix(in srgb,var(--basil) 15%,transparent);color:var(--basil);display:grid;place-items:center;flex:none;margin-top:1px">'+ic('check')+'</div><span style="font-size:12.5px;color:var(--ink2);line-height:1.85">'+esc(it)+'</span></div>').join('')+'</div>').join('');}
 function showWhatsNew(){const seen=S.meta.seenVer||'0';
   const news=CHANGELOG.filter(c=>c.v>seen);
-  if(!news.length)return;
   S.meta.seenVer=APP_VERSION;save();
-  openSheet('<h2>'+ic('sparkle')+'ما الجديد في نَسَق</h2>'+
-    news.map(c=>'<div class="fld" style="margin-bottom:4px"><label>'+esc(c.t)+'</label>'+
-      c.items.map(it=>'<div style="display:flex;gap:9px;align-items:flex-start;padding:6px 0"><div style="width:22px;height:22px;border-radius:8px;background:color-mix(in srgb,var(--basil) 15%,transparent);color:var(--basil);display:grid;place-items:center;flex:none;margin-top:1px">'+ic('check')+'</div><span style="font-size:12.5px;color:var(--ink2);line-height:1.85">'+esc(it)+'</span></div>').join('')+'</div>').join('')+
+  if(!news.length)return;
+  openSheet('<h2>'+ic('sparkle')+'ما الجديد في نَسَق</h2>'+changelogHTML(news)+
     '<button class="btn gold wide" data-act="sub-back" style="margin-top:8px">رائع، لننطلق</button>');}
+function viewChangelog(){openSheet('<h2>'+ic('sparkle')+'سجلّ التحديثات</h2>'+changelogHTML(CHANGELOG)+
+    '<button class="btn gold wide" data-act="sub-back" style="margin-top:8px">إغلاق</button>');}
 
 /* ================= الإعداد الأولي (Onboarding) ================= */
 let onbStep=0,onbName='',onbTmpl=new Set();
@@ -2889,6 +2894,7 @@ window.addEventListener('storage',e=>{
 $('#bnUpdateGo').onclick=()=>{
   if(!navigator.onLine){SFX.error();toast('لا اتصال بالإنترنت — سيبقى التحديث بانتظار عودته','ban');return;}
   $('#bnUpdate').classList.remove('on');
+  try{sessionStorage.setItem('nsqShowChangelog','1');}catch(e){}
   if(swReg&&swReg.waiting)swReg.waiting.postMessage('SKIP_WAITING');};
 $('#bnUpdateX').onclick=()=>{updateSnoozed=true;$('#bnUpdate').classList.remove('on');
   toast('أُجّل التحديث — سيظهر مجددًا عند الاتصال','clock');};
@@ -2916,7 +2922,10 @@ function boot(){Confetti.init();applyTheme();FT.init();snapshotIfNewDay();purgeT
   else if(hash==='new-habit'){setTimeout(()=>habitForm(),300);}
   else if(hash==='new-task'){setTimeout(()=>taskForm(),300);}
   if(S.meta.firstRun)setTimeout(onboarding,350);
-  else{setTimeout(showWhatsNew,650);setTimeout(checkAch,1200);}}
+  else{let justUpdated=false;try{justUpdated=sessionStorage.getItem('nsqShowChangelog')==='1';
+      if(justUpdated)sessionStorage.removeItem('nsqShowChangelog');}catch(e){}
+    if(justUpdated)setTimeout(showWhatsNew,650);
+    setTimeout(checkAch,1200);}}
 boot();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(hideSplash);
 else hideSplash();
