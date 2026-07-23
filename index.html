@@ -1534,7 +1534,7 @@ function goTabNoHist(t){$$('.navb').forEach(b=>b.classList.toggle('on',b.dataset
   const fabTabs={today:1,habits:1,tasks:1};
   $('#fab').classList.toggle('off',!fabTabs[t]);
   RENDER[t]&&RENDER[t]();}
-function subHead(title,extra){return '<div class="subhead"><button class="icobtn" data-act="sub-back">'+ic('back')+'</button><b>'+esc(title)+'</b>'+(extra||'')+'</div>';}
+function subHead(title,extra){return '<div class="subhead"><button class="icobtn" data-act="sub-back" aria-label="رجوع">'+ic('back')+'</button><b>'+esc(title)+'</b>'+(extra||'')+'</div>';}
 
 /* ================= مؤقّت التركيز ================= */
 const FT={phase:'work',running:false,endsAt:0,leftMs:0,round:1,task:null,int:0,lastSec:-1,
@@ -1650,12 +1650,12 @@ function openTrash(){openSub(()=>{
     ...S.trash.tasks.map(e=>({...e,type:'tasks',name:e.task.title,icon:'tasks',color:null})),
     ...S.trash.goals.map(e=>({...e,type:'goals',name:e.goal.title,icon:'target',color:e.goal.color}))]
     .sort((a,b)=>b.deletedAt-a.deletedAt);
-  $('#scr-sub').innerHTML=subHead('المحذوفات',items.length?'<button class="icobtn" data-act="trash-empty" style="color:var(--clay)" title="إفراغ الكل">'+ic('trash')+'</button>':'')+
+  $('#scr-sub').innerHTML=subHead('المحذوفات',items.length?'<button class="icobtn" data-act="trash-empty" style="color:var(--clay)" title="إفراغ الكل" aria-label="إفراغ كل المحذوفات">'+ic('trash')+'</button>':'')+
   (items.length?'<p class="faint" style="font-size:11.5px;margin:-4px 0 12px">تُحذف نهائيًا بعد سبعة أيام من حذفها — استعِد ما تريد قبل ذلك.</p>'+
    items.map(e=>'<div class="hab" style="'+(e.color?'--hc:'+e.color:'')+'"><div class="hic">'+ic(e.icon)+'</div>'+
     '<div class="hx"><b>'+esc(e.name)+'</b><div class="hmeta"><span>باقٍ '+trashDaysLeft(e.deletedAt)+' يوم قبل الحذف النهائي</span></div></div>'+
-    '<button class="icobtn" data-act="trash-restore" data-type="'+e.type+'" data-tid="'+e.tid+'" title="استعادة">'+ic('refresh')+'</button>'+
-    '<button class="icobtn" data-act="trash-del" data-type="'+e.type+'" data-tid="'+e.tid+'" style="color:var(--clay)" title="حذف نهائي">'+ic('close')+'</button></div>').join('')
+    '<button class="icobtn" data-act="trash-restore" data-type="'+e.type+'" data-tid="'+e.tid+'" title="استعادة" aria-label="استعادة">'+ic('refresh')+'</button>'+
+    '<button class="icobtn" data-act="trash-del" data-type="'+e.type+'" data-tid="'+e.tid+'" style="color:var(--clay)" title="حذف نهائي" aria-label="حذف نهائي">'+ic('close')+'</button></div>').join('')
   :'<div class="empty"><div class="ei">'+ic('trash')+'</div><b>المحذوفات فارغة</b><p>كل ما تحذفه يبقى هنا سبعة أيام قبل أن يُحذف نهائيًا.</p></div>');
 });}
 
@@ -1871,7 +1871,7 @@ function openHabitDetail(id){openSub(()=>{const h=habitById(id);
   for(let i=7;i>=0;i--){const to=addDays(t,-i*7),from=addDays(to,-6);
     wvals.push(Math.round(habitRate(h,S.habitLog,from,to)*100));wlabels.push(fromKey(to).getDate()+'/'+(fromKey(to).getMonth()+1));}
   $('#scr-sub').innerHTML=subHead(h.name,
-    '<button class="icobtn" data-act="edit-habit" data-id="'+h.id+'">'+ic('pen')+'</button>')+
+    '<button class="icobtn" data-act="edit-habit" data-id="'+h.id+'" aria-label="تعديل العادة">'+ic('pen')+'</button>')+
   '<div class="card" style="display:flex;gap:14px;align-items:center;--hc:'+h.color+'">'+
    '<div class="hic" style="width:56px;height:56px;border-radius:18px;background:color-mix(in srgb,'+h.color+' 16%,transparent);color:'+h.color+'">'+ic(h.icon)+'</div>'+
    '<div style="flex:1"><b style="font-size:16px">'+esc(h.name)+'</b>'+
@@ -1938,7 +1938,7 @@ RENDER.tasks=function(){const openCount=S.tasks.filter(t=>!t.done).length;
     '<button class="btn gold sm" data-act="qadd" style="border-radius:11px">'+ic('plus')+'</button></div>';
   const ctr='<div class="card flat" style="padding:8px 12px;display:flex;gap:8px;align-items:center;margin-bottom:10px;color:var(--ink3)">'+ic('search')+
     '<input class="inp" id="tsearch" placeholder="ابحث في مهامك…" value="'+esc(TASKQ)+'" style="border:0;background:transparent;padding:6px 0;flex:1">'+
-    '<button class="icobtn sm" data-act="tq-clear" id="tq-clear"'+(TASKQ?'':' hidden')+'>'+ic('close')+'</button></div>'+
+    '<button class="icobtn sm" data-act="tq-clear" id="tq-clear" aria-label="مسح البحث"'+(TASKQ?'':' hidden')+'>'+ic('close')+'</button></div>'+
     '<div class="chips" style="margin-bottom:14px">'+
     '<button class="'+(TASKTAG?'':'on')+'" data-act="tfilter" data-t="">الكل</button>'+
     S.tags.map(tg=>'<button class="'+(TASKTAG===tg.id?'on':'')+'" data-act="tfilter" data-t="'+tg.id+'">'+esc(tg.name)+'</button>').join('')+'</div>';
@@ -1959,7 +1959,7 @@ function renderFocus(){const k=todayKey();
   const openTasks=S.tasks.filter(t=>!t.done);
   $('#scr-focus').innerHTML=
   '<div class="top"><div><div class="tt">التركيز</div><div class="ts">'+(S.focus.sess[k]||0)+' جلسات اليوم · '+fmtMin(S.focus.log[k]||0)+'</div></div>'+
-  '<div class="top-acts"><button class="icobtn" data-act="immersive" aria-label="وضع الغمر">'+ic('expand')+'</button><button class="icobtn" data-act="focus-settings">'+ic('gear')+'</button></div></div>'+
+  '<div class="top-acts"><button class="icobtn" data-act="immersive" aria-label="وضع الغمر">'+ic('expand')+'</button><button class="icobtn" data-act="focus-settings" aria-label="إعدادات التركيز">'+ic('gear')+'</button></div></div>'+
   '<div class="seg" style="margin-bottom:6px"><button class="'+(FOCUSMODE==='timer'?'on':'')+'" data-act="fmode" data-v="timer">'+ic('timer')+'بومودورو</button>'+
   '<button class="'+(FOCUSMODE==='breath'?'on':'')+'" data-act="fmode" data-v="breath">'+ic('wind')+'تنفّس</button></div>'+
 
@@ -2044,7 +2044,7 @@ function openGoals(){openSub(()=>{
     ((g.miles||[]).length?g.miles.filter(m=>m.done).length+' من '+g.miles.length+' مرحلة':'تقدّم يدوي')+
     (dd!==null?(dd>=0?' · باقي '+dd+' يوم':' · تجاوز الموعد'):'')+'</div></div>'+ic('back')+'</div>'+
     '<div class="gbar"><i style="width:'+p+'%"></i></div></div>';};
-  $('#scr-sub').innerHTML=subHead('الأهداف','<button class="icobtn gold" data-act="new-goal">'+ic('plus')+'</button>')+
+  $('#scr-sub').innerHTML=subHead('الأهداف','<button class="icobtn gold" data-act="new-goal" aria-label="هدف جديد">'+ic('plus')+'</button>')+
   (act.length?act.map(card).join(''):'<div class="empty"><div class="ei">'+ic('target')+'</div><b>لا أهداف بعد</b><p>هدف واضح بمراحل صغيرة — هكذا تُقطع المسافات الطويلة.</p>'+
    '<button class="btn gold sm" data-act="new-goal" style="margin-top:14px">'+ic('plus')+'هدف جديد</button></div>')+
   (done.length?'<div class="sect"><div class="s-t">'+ic('trophy')+'أهداف محققة · '+done.length+'</div>'+done.map(card).join('')+'</div>':'');
@@ -2054,7 +2054,7 @@ function openGoalDetail(id){openSub(()=>{const g=S.goals.find(x=>x.id===id);
   const p=Math.round(goalProgress(g)*100);
   const dd=g.deadline?diffDays(todayKey(),g.deadline):null;
   const linked=(g.habitIds||[]).map(habitById).filter(Boolean);
-  $('#scr-sub').innerHTML=subHead(g.title,'<button class="icobtn" data-act="edit-goal" data-id="'+g.id+'">'+ic('pen')+'</button>')+
+  $('#scr-sub').innerHTML=subHead(g.title,'<button class="icobtn" data-act="edit-goal" data-id="'+g.id+'" aria-label="تعديل الهدف">'+ic('pen')+'</button>')+
   '<div class="card" style="--gc:'+g.color+'">'+
    (g.desc?'<p style="font-size:13.5px;color:var(--ink2);margin-bottom:12px">'+esc(g.desc)+'</p>':'')+
    '<div style="display:flex;gap:7px;flex-wrap:wrap">'+
@@ -2227,7 +2227,7 @@ function weekStats(){const {from,to}=weekRange();
   const moods=[];k=from;while(k<=to){moods.push({k,mood:((S.journal[k]||{}).mood)||0});k=addDays(k,1);}
   return{from,to,commit,best,focusMin,tasksDone,moods};}
 function openWeekReview(){openSub(()=>{const st=weekStats();
-  $('#scr-sub').innerHTML=subHead('مراجعة الأسبوع','<button class="icobtn gold" data-act="share-week">'+ic('share')+'</button>')+
+  $('#scr-sub').innerHTML=subHead('مراجعة الأسبوع','<button class="icobtn gold" data-act="share-week" aria-label="مشاركة الأسبوع">'+ic('share')+'</button>')+
    '<p class="faint" style="font-size:11.5px;margin:-4px 0 14px">'+fmtShort(st.from)+' — '+fmtShort(st.to)+'</p>'+
    '<div class="statgrid">'+
     '<div class="stat"><div class="sl">'+ic('leaf')+'التزامك</div><div class="sv num">'+st.commit+'<small>٪</small></div></div>'+
@@ -2331,8 +2331,8 @@ function openArchive(){openSub(()=>{const arch=S.habits.filter(h=>h.archived);
   $('#scr-sub').innerHTML=subHead('الأرشيف')+
   (arch.length?arch.map(h=>'<div class="hab" style="--hc:'+h.color+'"><div class="hic">'+ic(h.icon)+'</div>'+
    '<div class="hx"><b>'+esc(h.name)+'</b></div>'+
-   '<button class="icobtn" data-act="archive-habit" data-id="'+h.id+'" title="استعادة">'+ic('refresh')+'</button>'+
-   '<button class="icobtn" data-act="del-habit" data-id="'+h.id+'" style="color:var(--clay)">'+ic('trash')+'</button></div>').join('')
+   '<button class="icobtn" data-act="archive-habit" data-id="'+h.id+'" title="استعادة" aria-label="استعادة العادة">'+ic('refresh')+'</button>'+
+   '<button class="icobtn" data-act="del-habit" data-id="'+h.id+'" style="color:var(--clay)" aria-label="حذف نهائي">'+ic('trash')+'</button></div>').join('')
   :'<div class="empty"><div class="ei">'+ic('archive')+'</div><b>الأرشيف فارغ</b><p>حين تحتاج استراحة من عادة دون فقد سجلّها — أرشِفها.</p></div>');
 });}
 </script>
@@ -2465,6 +2465,8 @@ function habitForm(h){const ed=!!h;h=h||{name:'',icon:'leaf',color:HB_COLORS[0],
    '<button class="btn gold wide" id="h-save" style="margin-top:8px">'+(ed?'حفظ التغييرات':'إنشاء العادة')+'</button>'+
    (ed?'<button class="btn danger wide" data-act="del-habit" data-id="'+h.id+'" style="margin-top:9px">'+ic('trash')+'حذف</button>':''),
   sh=>{
+   const hn=sh.querySelector('#h-name');setTimeout(()=>hn.focus(),260);
+   hn.onkeydown=e=>{if(e.key==='Enter')sh.querySelector('#h-save').click();};
    let sel={icon:h.icon,color:h.color,type:h.type,fk,days:[...(h.freq.days||[0,1,2,3,4,5,6])],period:h.period||'any'};
    sh.querySelector('#h-icons').onclick=e=>{const b=e.target.closest('[data-i]');if(!b)return;sel.icon=b.dataset.i;$$('#h-icons button').forEach(x=>x.classList.toggle('on',x===b));};
    sh.querySelector('#h-colors').onclick=e=>{const b=e.target.closest('[data-c]');if(!b)return;sel.color=b.dataset.c;$$('#h-colors button').forEach(x=>x.classList.toggle('on',x===b));};
@@ -2493,6 +2495,9 @@ function habitForm(h){const ed=!!h;h=h||{name:'',icon:'leaf',color:HB_COLORS[0],
 function taskForm(t){const ed=!!t;t=t||{title:'',notes:'',due:null,time:null,pr:{imp:false,urg:false},tag:null,subs:[],repeat:'none'};
   openSheet('<h2>'+ic(ed?'pen':'plus')+(ed?'تعديل المهمة':'مهمة جديدة')+'</h2>'+
    '<div class="fld"><label>المهمة</label><input class="inp" id="t-title" value="'+esc(t.title)+'" placeholder="ماذا تريد أن تنجز؟" maxlength="120"></div>'+
+   '<div class="chips" id="t-quickdate" style="margin-bottom:8px">'+
+    '<button type="button" data-d="today">اليوم</button><button type="button" data-d="tmr">غدًا</button>'+
+    '<button type="button" data-d="week">الأسبوع القادم</button><button type="button" data-d="none">بلا تاريخ</button></div>'+
    '<div class="row2"><div class="fld"><label>التاريخ</label><input class="inp" type="date" id="t-due" value="'+(t.due||'')+'"></div>'+
     '<div class="fld"><label>الوقت</label><input class="inp" type="time" id="t-time" value="'+(t.time||'')+'"></div></div>'+
    '<div class="fld"><label>الأولوية</label><div class="chips" id="t-pr"><button class="'+(t.pr.imp?'on':'')+'" data-k="imp">'+ic('star')+'مهم</button><button class="'+(t.pr.urg?'on':'')+'" data-k="urg">'+ic('bolt')+'عاجل</button></div></div>'+
@@ -2504,6 +2509,12 @@ function taskForm(t){const ed=!!t;t=t||{title:'',notes:'',due:null,time:null,pr:
    '<button class="btn gold wide" id="t-save" style="margin-top:8px">'+(ed?'حفظ':'إضافة المهمة')+'</button>'+
    (ed?'<button class="btn danger wide" data-act="del-task" data-id="'+t.id+'" style="margin-top:9px">'+ic('trash')+'حذف</button>':''),
   sh=>{
+   const tt=sh.querySelector('#t-title');setTimeout(()=>tt.focus(),260);
+   tt.onkeydown=e=>{if(e.key==='Enter')sh.querySelector('#t-save').click();};
+   sh.querySelector('#t-quickdate').onclick=e=>{const b=e.target.closest('[data-d]');if(!b)return;
+     const dueEl=sh.querySelector('#t-due'),k=todayKey();
+     dueEl.value=b.dataset.d==='today'?k:b.dataset.d==='tmr'?addDays(k,1):b.dataset.d==='week'?addDays(k,7):'';
+     SFX.tap();};
    let pr={...t.pr},tag=t.tag;
    sh.querySelector('#t-pr').onclick=e=>{const b=e.target.closest('[data-k]');if(!b)return;pr[b.dataset.k]=!pr[b.dataset.k];b.classList.toggle('on');};
    sh.querySelector('#t-tag').onclick=e=>{const b=e.target.closest('[data-t]');if(!b)return;tag=b.dataset.t||null;$$('#t-tag button').forEach(x=>x.classList.toggle('on',x===b));};
@@ -2537,6 +2548,8 @@ function goalForm(g){const ed=!!g;g=g||{title:'',desc:'',deadline:'',color:HB_CO
    '<button class="btn gold wide" id="g-save" style="margin-top:8px">'+(ed?'حفظ':'إنشاء الهدف')+'</button>'+
    (ed?'<button class="btn danger wide" data-act="del-goal" data-id="'+g.id+'" style="margin-top:9px">'+ic('trash')+'حذف</button>':''),
   sh=>{
+   const gt=sh.querySelector('#g-title');setTimeout(()=>gt.focus(),260);
+   gt.onkeydown=e=>{if(e.key==='Enter')sh.querySelector('#g-save').click();};
    let color=g.color,hIds=[...(g.habitIds||[])];
    sh.querySelector('#g-colors').onclick=e=>{const b=e.target.closest('[data-c]');if(!b)return;color=b.dataset.c;$$('#g-colors button').forEach(x=>x.classList.toggle('on',x===b));};
    const mBox=sh.querySelector('#g-miles');
@@ -2655,7 +2668,7 @@ document.addEventListener('click',async e=>{
     case'go-stats':openStats();break;
     case'go-week':openWeekReview();break;
     case'view-changelog':viewChangelog();break;
-    case'share-week':shareWeek();break;
+    case'share-week':toast('جارٍ تحضير البطاقة…','share');shareWeek();break;
     case'add-cal':exportHabitToCalendar(id);break;
     case'plan-tomorrow':planTomorrowSheet();break;
     case'go-archive':openArchive();break;
@@ -2708,7 +2721,7 @@ document.addEventListener('click',async e=>{
         S.tasks=S.tasks.filter(x=>!x.done);save();SFX.del();rerender();
         offerUndo('حُذفت '+tids.length+' مهمة مكتملة',()=>{DONE_OPEN=true;
           tids.forEach(tid=>restoreFromTrash('tasks',tid));rerender();});}break;}
-    case'share-day':shareDay();break;
+    case'share-day':toast('جارٍ تحضير البطاقة…','share');shareDay();break;
     case'immersive':{const on=document.body.classList.toggle('immersive');
       try{if(on&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen();
         else if(!on&&document.exitFullscreen)document.exitFullscreen();}catch(e){}
@@ -2779,9 +2792,16 @@ $('#celebrate').addEventListener('click',()=>$('#celebrate').classList.remove('o
 document.addEventListener('pointerdown',()=>AU.ensure(),{once:true});
 
 /* ================= ما الجديد ================= */
-const APP_VERSION='1.6.1';
+const APP_VERSION='1.6.2';
 const arDigits=s=>String(s).replace(/[0-9]/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
 const CHANGELOG=[
+ {v:'1.6.2',t:'تحديث ١.٦.٢ — تحسينات وإصلاحات',items:[
+  'إصلاح: رقم الإصدار في التطبيق كان متأخرًا — الآن يطابق الأحدث دومًا',
+  'إصلاح: «ما الجديد» لم تعد تظهر إلا بعد ضغطك الصريح على «تحديث الآن» — لا مفاجآت بعد الآن',
+  'إضافة: زر «سجلّ التحديثات» في الإعدادات لتصفّح تاريخ التطبيق كاملًا وقتما شئت',
+  'نماذج العادة والمهمة والهدف تفتح بلوحة مفاتيح جاهزة فورًا، واضغط Enter للحفظ',
+  'شرائح سريعة لتاريخ المهمة: اليوم، غدًا، الأسبوع القادم، أو بلا تاريخ — بلمسة واحدة',
+  'تحسينات إتاحة الوصول لقارئات الشاشة عبر عشرات الأزرار']},
  {v:'1.6.1',t:'تحديث ١.٦.١ — تصليب',items:[
   'تنبيه جديد وغير مزعج إن فتحت نَسَق في أكثر من تبويب بالخطأ، مع خيار تحديث بلمستك أنت لا تلقائيًا',
   'تدقيق أمان وأداء شامل: لا تأثير مرئي، لكن التطبيق الآن أصلب أمام حالات نادرة (بيانات كثيفة، استيراد تالف، امتلاء المساحة)']},
